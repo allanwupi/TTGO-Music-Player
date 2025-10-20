@@ -35,6 +35,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
 
 void setup()
 {
+    //Serial.begin(115200);
     pinMode(TREBLE_BUZZER, OUTPUT);
     pinMode(BASS_BUZZER, OUTPUT);
     pinMode(15, OUTPUT);
@@ -51,10 +52,9 @@ void setup()
 	ledcAttachPin(TREBLE_BUZZER, TREBLE);
 	ledcAttachPin(BASS_BUZZER, BASS);
     userSelectSong(tft);
-    //Serial.begin(115200);
+    tft->setTextSize(1);
     for (int i = 0; i < NUM_TRACKS; i++)
         convertToAbsoluteTime(*SongPtrs[i]);
-    tft->setTextSize(1);
 }
 
 void loop()
@@ -162,17 +162,19 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
     unsigned long startTime = millis();
     unsigned long playTime = millis();
     while (!finished) {
-        if (now % song.bar == 0 && !movedBar) {
-            if (now % divisions == 0) tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
-            bars++;
-            movedBar = true;
-        }
         minutes = (millis() - playTime + elapsed) / 60000;
         seconds = ((millis() - playTime + elapsed) / 1000) % 60;
         if (seconds != prevSeconds) {
             tft->setCursor(7,7);
             tft->printf("%d:%02d", minutes, seconds);
             prevSeconds = seconds;
+        }
+        if (now % song.bar == 0 && !movedBar) {
+            if (now % divisions == 0) tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
+            bars++;
+            tft->setCursor(7,7);
+            tft->printf("%d:%02d  %2d/%-2d", minutes, seconds, bars, song.numBars);
+            movedBar = true;
         }
         if (now == next && !printed) {
             printed = true;
@@ -235,17 +237,19 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
     unsigned long startTime = millis();
     unsigned long playTime = millis();
     while (!finishedTreble || !finishedBass) {
-        if (now % song.bar == 0 && !movedBar) {
-            if (now % divisions == 0) tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
-            bars++;
-            movedBar = true;
-        }
         minutes = (millis() - playTime) / 60000;
         seconds = ((millis() - playTime) / 1000) % 60;
         if (seconds != prevSeconds) {
             tft->setCursor(7,7);
             tft->printf("%d:%02d", minutes, seconds);
             prevSeconds = seconds;
+        }
+        if (now % song.bar == 0 && !movedBar) {
+            if (now % divisions == 0) tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
+            bars++;
+            tft->setCursor(7,7);
+            tft->printf("%d:%02d  %2d/%-2d", minutes, seconds, bars, song.numBars);
+            movedBar = true;
         }
         if (now == nextTreble && !wroteTreble) {
             wroteTreble = true;
