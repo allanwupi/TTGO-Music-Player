@@ -2,15 +2,15 @@
 #include "pitches.h"
 
 const char *SONG_DESCRIPTIONS[NUM_SONGS+1] = {
-    "1. MEGALOVANIA (2:37)",
-    "2. THE LEGEND (1:48)",
-    "3. FREEDOM MOTIF (0:13) ",
+    "1. MEGALOVANIA (2:39)",
+    "2. THE LEGEND (1:47)",
+    "3. FREEDOM MOTIF (0:12) ",
     "4. ----- ",
     "5. ----- ",
     "6. Rotate Screen",
 };
 
-Note legend0[] = {
+Note legend1[] = {
 {REST,"",2},{C5,"C5",1},{B4,"B4",1},{C5,"C5",1},{D5,"D5",1},{E5,"E5",2},
 {E5,"E5",1},{D5,"D5",1},{E5,"E5",1},{F5,"F5",1},{G5,"G5",4},
 {REST,"",2},{A5,"A5",1},{G5,"G5",1},{A5,"A5",1},{B5,"B5",1},{C6,"C6",2},
@@ -20,9 +20,6 @@ Note legend0[] = {
 {D5,"D5",4},{C5,"C5",2},{E5,"E5",2},
 {D5,"D5",4},{E5,"E5",4},
 {REST,"",8},
-};
-
-Note legend1[] = {
 {A3,"A3",2},{C4,"C4",1},{E4,"E4",1},{C5,"C5",2},{B4,"B4",2},
 {G4,"G4",2},{D4,"D4",2},{E4,"E4",4},
 {E4,"E4",2},{F4,"F4",1},{G4,"G4",1},{F4,"F4",2},{E4,"E4",2},
@@ -295,10 +292,9 @@ Note megalovaniaBass[] {
 
 Song_t Megalovania = {"MEGALOVANIA - Toby Fox", megalovania, 766, 63, 32, 78, D3, A6};
 Song_t MegalovaniaBass = {"MEGALOVANIA", megalovaniaBass, 978, 63, 32, 48, AS2, D4};
-Song_t TheLegend0 = {"THE LEGEND - Toby Fox (1/3)", legend0, 33, 272, 8, 9, G3, G6};
-Song_t TheLegend1 = {"THE LEGEND - Toby Fox (2/3)", legend1, 96, 272, 8, 24, G3, G6};
-Song_t TheLegend2 = {"THE LEGEND - Toby Fox (3/3)", legend2, 38, 136, 16, 8, G3, G6};
-Song_t TheLegend3 = {"THE LEGEND - Toby Fox (4/3)", legend3, 48, 182, 6, 18, G3, G6};
+Song_t TheLegend1 = {"THE LEGEND - Toby Fox (1/3)", legend1, 129, 272, 8, 33, G3, GS6};
+Song_t TheLegend2 = {"THE LEGEND - Toby Fox (2/3)", legend2, 38, 136, 16, 8, G3, GS6};
+Song_t TheLegend3 = {"THE LEGEND - Toby Fox (3/3)", legend3, 48, 182, 6, 18, G3, GS6};
 Song_t FreedomMotif = {"FREEDOM MOTIF", freedomMotif, 31, 100, 16, 8, E4, C6};
 
-Song_t *SongPtrs[NUM_TRACKS] = {&Megalovania, &MegalovaniaBass, &TheLegend0, &TheLegend1, &TheLegend2, &TheLegend3, &FreedomMotif};
+Song_t *SongPtrs[NUM_TRACKS] = {&Megalovania, &MegalovaniaBass, &TheLegend1, &TheLegend2, &TheLegend3, &FreedomMotif};

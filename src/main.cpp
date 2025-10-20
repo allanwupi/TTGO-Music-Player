@@ -30,8 +30,8 @@ int chosenSong = 0;
 
 void userSelectSong(TFT_eSPI *tft);
 void convertToAbsoluteTime(Song_t song);
-void playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay = 1);
-void playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay = 1);
+unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
+unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
 
 void setup()
 {
@@ -59,15 +59,15 @@ void setup()
 
 void loop()
 {
+    unsigned long runTime = 0;
     switch (chosenSong) {
         case (0):
             playTracks(Megalovania, MegalovaniaBass, tft);
             break;
         case (1):
-            playSingleTrack(TheLegend0, tft, 4);
-            playSingleTrack(TheLegend1, tft, 4);
-            playSingleTrack(TheLegend2, tft, 2);
-            playSingleTrack(TheLegend3, tft, 4);
+            runTime = playSingleTrack(TheLegend1, tft, 2, 0);
+            runTime = playSingleTrack(TheLegend2, tft, 2, runTime);
+            runTime = playSingleTrack(TheLegend3, tft, 2, runTime);
             break;
         case (2):
             playSingleTrack(FreedomMotif, tft, 4);
@@ -135,8 +135,7 @@ void convertToAbsoluteTime(Song_t song) {
     }
 }
 
-
-void playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay) {
+unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsed) {
     int freq1 = 0, freq2 = 0;
     int n, minN, maxN;
     for (n = 1 ; n <= NUM_FREQS ; n++) {
@@ -152,23 +151,24 @@ void playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay) {
     const int dy = 150/(maxN - minN);
     const char *noteName = song.notes[0].noteName;
     tft->setCursor(7,7);
-    tft->printf("0:00  00/00  ---  %s", song.name);
+    tft->printf("%d:%02d  00/00  ---  %s", elapsed/60000, (elapsed/1000)%60, song.name);
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
     int now = 0, next = 0, bars = 0, i = 0, j = 0;
     bool finalNote = false;
     bool finished = false;
-    bool printed = false;
+    bool movedBar = false, printed = false;
     int duration, reqDelay;
-    int minutes = 0, seconds = 0, prevSeconds = -1;
+    int minutes = elapsed/60000, seconds = (elapsed/1000)%60, prevSeconds = -1;
     unsigned long startTime = millis();
     unsigned long playTime = millis();
     while (!finished) {
-        if (now % song.bar == 0 && !printed) {
+        if (now % song.bar == 0 && !movedBar) {
             if (now % divisions == 0) tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
             bars++;
+            movedBar = true;
         }
-        minutes = (millis() - playTime) / 60000;
-        seconds = ((millis() - playTime) / 1000) % 60;
+        minutes = (millis() - playTime + elapsed) / 60000;
+        seconds = ((millis() - playTime + elapsed) / 1000) % 60;
         if (seconds != prevSeconds) {
             tft->setCursor(7,7);
             tft->printf("%d:%02d", minutes, seconds);
@@ -197,14 +197,16 @@ void playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay) {
             }
         }
         if (millis() - startTime > T0) {
+            movedBar = false;
             printed = false;
             now++;
             startTime = millis();
         }
     }
+    return minutes*60000+seconds*1000;
 }
 
-void playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay) {
+unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsed) {
     int freq1 = 0, freq2 = 0;
     int n, minN, maxN;
     for (n = 1 ; n <= NUM_FREQS ; n++) {
@@ -221,21 +223,22 @@ void playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay) {
     const char *trebleNoteName = song.notes[0].noteName;
     const char *bassNoteName = bass.notes[0].noteName;
     tft->setCursor(7,7);
-    tft->printf("0:00  00/00  ---.---  %s", song.name);
+    tft->printf("%d:%02d  00/00  ---.---  %s", elapsed/60000, (elapsed/1000)%60, song.name);
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
     int now = 0, bars = 0, i = 0, j = 0;
     int nextTreble = 0, nextBass = 0;
     bool lastTrebleNote = false, lastBassNote = false;
     bool finishedTreble = false, finishedBass = false;
-    bool wroteTreble = false, wroteBass = false;
+    bool movedBar = false, wroteTreble = false, wroteBass = false;
     int duration, reqDelay;
-    int minutes = 0, seconds = 0, prevSeconds = -1;
+    int minutes = elapsed/60000, seconds = (elapsed/1000)%60, prevSeconds = -1;
     unsigned long startTime = millis();
     unsigned long playTime = millis();
     while (!finishedTreble || !finishedBass) {
-        if (now % song.bar == 0 && !wroteTreble && !wroteBass) {
+        if (now % song.bar == 0 && !movedBar) {
             if (now % divisions == 0) tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
             bars++;
+            movedBar = true;
         }
         minutes = (millis() - playTime) / 60000;
         seconds = ((millis() - playTime) / 1000) % 60;
@@ -289,10 +292,12 @@ void playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay) {
             }
         }
         if (millis() - startTime > T0) {
+            movedBar = false;
             wroteTreble = false;
             wroteBass = false;
             now++;
             startTime = millis();
         }
     }
+    return minutes*60000+seconds*1000;
 }

@@ -4,7 +4,7 @@
 
 // Note: we can only fit 5 songs onto the screen at once
 #define NUM_SONGS 5
-#define NUM_TRACKS 7
+#define NUM_TRACKS 6
 
 extern const char *SONG_DESCRIPTIONS[NUM_SONGS+1];
 
@@ -33,7 +33,6 @@ extern Note legend3[];
 extern Note freedomMotif[];
 
 extern Song_t Megalovania;
-extern Song_t TheLegend0;
 extern Song_t TheLegend1;
 extern Song_t TheLegend2;
 extern Song_t TheLegend3;
