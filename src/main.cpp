@@ -72,14 +72,15 @@ void loop()
            break;
         default:
             // TODO: Put an error message here?
-            delay(1000);
+            userSelectSong(tft);
     }
 }
 
 void userSelectSong(TFT_eSPI *tft) {
     int prevLeft = 0, prevRight = 0;
     int currLeft = 0, currRight = 0;
-    int prevChoice = -1, currChoice = 0;
+    int prevChoice = -1;
+    static int currChoice = 0;
     bool startPlayer = false;
 
     tft->setCursor(0, 0);
@@ -93,13 +94,8 @@ void userSelectSong(TFT_eSPI *tft) {
             if (currChoice == NUM_SONGS) {
                 screenOrientation = (screenOrientation > 1) ? 1 : 3;
                 tft->setRotation(screenOrientation);
-                tft->fillScreen(TFT_BLACK);
-                tft->setCursor(0, 0);
-                tft->printf(" WORST MUSIC PLAYER EVER ");
-                tft->drawFastHLine(0, 20, 320, TFT_WHITE);
-                prevChoice = -1;
             }
-            else startPlayer = true;
+            startPlayer = true;
         } else if (prevRight && !currRight) {
             currChoice = (currChoice + 1) % (NUM_SONGS+1);
         }
