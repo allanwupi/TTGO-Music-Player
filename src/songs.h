@@ -39,4 +39,6 @@ extern Song_t TheLegend2;
 extern Song_t TheLegend3;
 extern Song_t FreedomMotif;
 
+extern Song_t MegalovaniaBass;
+
 #endif
