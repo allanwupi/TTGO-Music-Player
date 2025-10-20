@@ -3,6 +3,8 @@
 #include "songs.h"
 #include "pitches.h"
 
+const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v1.0 ";
+
 #define TREBLE 1
 #define BASS 2
 #define TREBLE_BUZZER 1
@@ -65,8 +67,11 @@ void loop()
             playSong(TheLegend2, 2, tft);
             playSong(TheLegend3, 4, tft);
             break;
-        default:
+        case (3):
             playSong(FreedomMotif, 2, tft);
+        default:
+            // TODO: Put an error message here?
+            delay(1000);
     }
 }
 
@@ -77,7 +82,7 @@ void userSelectSong(TFT_eSPI *tft) {
     bool startPlayer = false;
 
     tft->setCursor(0, 0);
-    tft->printf(" WORST MUSIC PLAYER EVER ");
+    tft->printf(PROGRAM_NAME);
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
 
     while (!startPlayer) {
