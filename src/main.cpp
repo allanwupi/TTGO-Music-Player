@@ -65,7 +65,7 @@ void loop()
             playSong(TheLegend3, 4, tft);
             break;
         case (2):
-            playSong(FreedomMotif, 2, tft);
+            playSong(FreedomMotif, 4, tft);
            break;
         default:
             // TODO: Put an error message here?
@@ -140,7 +140,7 @@ void playSong(Song_t song, int barsToDisplay, TFT_eSPI *tft)
     int bars = 0;
     int act_delay;
     tft->setCursor(0, 0);
-    tft->printf("000/%-3d: --- %.13s", song.numBars, song.name);
+    tft->printf("   /%-3d:     %.13s", song.numBars, song.name);
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
     unsigned long startTime;
     for (int i = 0, k = 0; i < song.numNotes; i++) {
@@ -171,6 +171,7 @@ void playSong(Song_t song, int barsToDisplay, TFT_eSPI *tft)
             tft->printf("%3d/%-3d: ", bars, song.numBars);
         }
         pos += song.notes[i].noteLength;
+        bars += (song.notes[i].noteLength > song.bar); //temporary fix (will need rework?)
         act_delay = T - (millis() - startTime);
         if (act_delay > 0) delay(act_delay);
     }

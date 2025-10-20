@@ -81,10 +81,8 @@ Note legend3[] = {
 {E5,"E5",4},{C5,"C5",2},
 {DS5,"Eb5",2},{B4,"B4",2},{A4,"A4",2},
 {DS4,"Eb4",4},{DS5,"Eb5",2},
-{E5,"E5",6},
-{E5,"E5",6},
-{REST,"",6},
-{REST,"",6},
+{E5,"E5",12},
+{REST,"",12},
 };
 
 Note megalovania[] = {
@@ -202,4 +200,4 @@ Song_t TheLegend0 = {"  THE LEGEND ", " LEGEND (0/3)", legend0, 33, 272, 8, 9, G
 Song_t TheLegend1 = {"  THE LEGEND ", " LEGEND (1/3)", legend1, 96, 272, 8, 24, G3, G6};
 Song_t TheLegend2 = {"  THE LEGEND ", " LEGEND (2/3)", legend2, 38, 136, 16, 8, G3, G6};
 Song_t TheLegend3 = {"  THE LEGEND ", " LEGEND (3/3)", legend3, 48, 182, 6, 18, G3, G6};
-Song_t FreedomMotif = {"FREEDOM MOTIF", 0, freedomMotif, 31, 100, 32, 4, E4, C6};
+Song_t FreedomMotif = {"FREEDOM MOTIF", 0, freedomMotif, 31, 100, 16, 8, E4, C6};
