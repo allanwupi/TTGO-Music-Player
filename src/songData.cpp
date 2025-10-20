@@ -293,10 +293,12 @@ Note megalovaniaBass[] {
 {REST,"",32},
 };
 
-Song_t Megalovania = {" MEGALOVANIA", 0, megalovania, 766, 63, 32, 78, D3, A6};
-Song_t MegalovaniaBass = {"  MEGALOVANIA", 0, megalovaniaBass, 978, 63, 32, 48, AS2, D4};
-Song_t TheLegend0 = {"  THE LEGEND ", " LEGEND (0/3)", legend0, 33, 272, 8, 9, G3, G6};
-Song_t TheLegend1 = {"  THE LEGEND ", " LEGEND (1/3)", legend1, 96, 272, 8, 24, G3, G6};
-Song_t TheLegend2 = {"  THE LEGEND ", " LEGEND (2/3)", legend2, 38, 136, 16, 8, G3, G6};
-Song_t TheLegend3 = {"  THE LEGEND ", " LEGEND (3/3)", legend3, 48, 182, 6, 18, G3, G6};
-Song_t FreedomMotif = {"FREEDOM MOTIF", 0, freedomMotif, 31, 100, 16, 8, E4, C6};
+Song_t Megalovania = {"MEGALOVANIA - Toby Fox", megalovania, 766, 63, 32, 78, D3, A6};
+Song_t MegalovaniaBass = {"MEGALOVANIA", megalovaniaBass, 978, 63, 32, 48, AS2, D4};
+Song_t TheLegend0 = {"THE LEGEND - Toby Fox (1/3)", legend0, 33, 272, 8, 9, G3, G6};
+Song_t TheLegend1 = {"THE LEGEND - Toby Fox (2/3)", legend1, 96, 272, 8, 24, G3, G6};
+Song_t TheLegend2 = {"THE LEGEND - Toby Fox (3/3)", legend2, 38, 136, 16, 8, G3, G6};
+Song_t TheLegend3 = {"THE LEGEND - Toby Fox (4/3)", legend3, 48, 182, 6, 18, G3, G6};
+Song_t FreedomMotif = {"FREEDOM MOTIF", freedomMotif, 31, 100, 16, 8, E4, C6};
+
+Song_t *SongPtrs[NUM_TRACKS] = {&Megalovania, &MegalovaniaBass, &TheLegend0, &TheLegend1, &TheLegend2, &TheLegend3, &FreedomMotif};
