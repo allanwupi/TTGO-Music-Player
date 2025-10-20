@@ -20,6 +20,7 @@ typedef struct {
     int numNotes; // Size of note array
     int period; // Millisecond duration of shortest note
     int bar; // Number of shortest note durations in 1 bar
+    int numBars; // Length of the song in bars
     int minFreq; // Only used for scaling TFT
     int maxFreq; // Only used for scaling TFT
 } Song_t;

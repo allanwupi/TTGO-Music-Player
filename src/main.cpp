@@ -3,12 +3,12 @@
 #include "songs.h"
 #include "pitches.h"
 
-const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v1.0 ";
+const char *PROGRAM_NAME = " TTGO MUSIC PLAYER v1.0 ";
 
 #define TREBLE 1
 #define BASS 2
-#define TREBLE_BUZZER 43
-#define BASS_BUZZER 1
+#define TREBLE_BUZZER 1
+#define BASS_BUZZER 2
 
 #define MENU_X_DATUM    10
 #define MENU_Y_DATUM    30
@@ -132,44 +132,45 @@ void playSong(Song_t song, int barsToDisplay, TFT_eSPI *tft)
             break;
         }
     }
-    const int songLength = song.numNotes;
-    const int dx = 320/barsToDisplay/song.bar;
+    const int dx = 320/(song.bar * barsToDisplay);
     const int dy = 150/(maxN - minN);
     const int T0 = song.period;
     const char *noteName;
-    int periods = 0;
-    unsigned long startTime;
+    int pos = 0;
+    int bars = 0;
     int act_delay;
     tft->setCursor(0, 0);
-    tft->printf("000/%-3d: --- %.13s", songLength, song.name);
+    tft->printf("000/%-3d: --- %.13s", song.numBars, song.name);
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
-    for (int i = 0, k = 0; i < songLength; i++) {
+    unsigned long startTime;
+    for (int i = 0, k = 0; i < song.numNotes; i++) {
         startTime = millis();
         freq = song.notes[i].pitch;
         noteName = song.notes[i].noteName;
         T = song.notes[i].noteLength * T0;
         tft->setCursor(0, 0);
-        if (periods % (barsToDisplay*song.bar) == 0) {
-            tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
-            periods = 0;
+        if (pos % song.bar == 0) {
+            bars++;
             k = !k;
+        }
+        if (pos % (barsToDisplay*song.bar) == 0) {
+            tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
+            pos = 0;
         }
         if (freq) {
             ledcWriteTone(TREBLE, freq);
-            //ledcWriteTone(BASS, 294);
             for (n = minN ; n <= maxN ; n++) if (freq == TONE_INDEX[n]) break;
-            tft->drawFastHLine(periods*dx, 169-dy*(n-minN), dx*(T/T0)-2, HIGH_EMPHASIS_COLOUR);
+            tft->drawFastHLine(pos*dx, 169-dy*(n-minN), dx*(T/T0)-2, HIGH_EMPHASIS_COLOUR);
             if (song.overflow)
-                tft->printf("%3d/%-3d: %-3s %.13s", i+1, songLength, noteName, (k) ? song.name : song.overflow);
+                tft->printf("%3d/%-3d: %-3s %.13s", bars, song.numBars, noteName, (k) ? song.name : song.overflow);
             else
-                tft->printf("%3d/%-3d: %-3s %.13s", i+1, songLength, noteName, song.name);
+                tft->printf("%3d/%-3d: %-3s %.13s", bars, song.numBars, noteName, song.name);
         } else {
             ledcWriteTone(TREBLE, 0);
-            //ledcWriteTone(BASS, 294);
-            tft->drawFastHLine(periods*dx, 169, dx*(T/T0)-2, LOW_EMPHASIS_COLOUR);
-            tft->printf("%3d/%-3d: ", i+1, songLength);
+            //tft->drawFastHLine(pos*dx, 169, dx*(T/T0)-2, LOW_EMPHASIS_COLOUR);
+            tft->printf("%3d/%-3d: ", bars, song.numBars);
         }
-        periods += song.notes[i].noteLength;
+        pos += song.notes[i].noteLength;
         act_delay = T - (millis() - startTime);
         if (act_delay > 0) delay(act_delay);
     }
