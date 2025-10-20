@@ -4,7 +4,7 @@
 
 // Note: we can only fit 5 songs onto the screen at once
 #define NUM_SONGS 5
-#define NUM_TRACKS 11
+#define NUM_TRACKS 9
 
 extern const char *SONG_DESCRIPTIONS[NUM_SONGS+1];
 
@@ -26,8 +26,6 @@ typedef struct {
 } Song_t;
 
 extern Note megalovania[];
-extern Note legend0[];
-extern Note legendBass0[];
 extern Note legend1[];
 extern Note legendBass1[];
 extern Note legend2[];
@@ -37,8 +35,6 @@ extern Note legendBass3[];
 extern Note freedomMotif[];
 
 extern Song_t Megalovania;
-extern Song_t TheLegend0;
-extern Song_t TheLegendBass0;
 extern Song_t TheLegend1;
 extern Song_t TheLegendBass1;
 extern Song_t TheLegend2;

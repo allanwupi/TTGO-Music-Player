@@ -65,8 +65,7 @@ void loop()
             playTracks(Megalovania, MegalovaniaBass, tft);
             break;
         case (1):
-            runTime = playTracks(TheLegend0, TheLegendBass0, tft, 2, 0);
-            runTime = playTracks(TheLegend1, TheLegendBass1, tft, 2, runTime);
+            runTime = playTracks(TheLegend1, TheLegendBass1, tft, 2, 0);
             runTime = playTracks(TheLegend2, TheLegendBass2, tft, 2, runTime);
             runTime = playTracks(TheLegend3, TheLegendBass3, tft, 2, runTime);
             break;
@@ -74,7 +73,6 @@ void loop()
             playSingleTrack(FreedomMotif, tft, 4);
            break;
         default:
-            // TODO: Put an error message here?
             tft->setTextSize(2);
             userSelectSong(tft);
     }
@@ -207,7 +205,7 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
             startTime = millis();
         }
     }
-    return minutes*60000+seconds*1000;
+    return minutes*60000 + seconds*1000;
 }
 
 unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsed) {
@@ -239,8 +237,8 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
     unsigned long startTime = millis();
     unsigned long playTime = millis();
     while (!finishedTreble || !finishedBass) {
-        minutes = (millis() - playTime) / 60000;
-        seconds = ((millis() - playTime) / 1000) % 60;
+        minutes = (millis() - playTime + elapsed) / 60000;
+        seconds = ((millis() - playTime + elapsed) / 1000) % 60;
         if (seconds != prevSeconds) {
             tft->setCursor(7,7);
             tft->printf("%d:%02d", minutes, seconds);
@@ -305,5 +303,5 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
             startTime = millis();
         }
     }
-    return minutes*60000+seconds*1000;
+    return minutes*60000 + seconds*1000;
 }
