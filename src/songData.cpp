@@ -111,35 +111,53 @@ Note legend2[] = {
 
 Note legendBass2[] = {
 {A2,"A2",1},{REST,"",1},{A2,"A2",10},{A2,"A2",4},
-{B2,"B2",1},{REST,"",1},{B2,"B2",10},{B2,"B2",4},
+{G2,"G2",1},{REST,"",1},{G2,"G2",10},{G2,"G2",4},
 {F3,"F3",4},{F2,"F2",12},
 {G3,"G3",4},{E2,"E2",4},{G4,"G4",4},{D4,"D4",4},
 {C3,"C3",16},
 {B2,"B2",8},{G2,"G2",8},
-{AS3,"A#3",16},
+{AS2,"A#2",16},
 {B2,"B2",8},{GS3,"G#3",8},
 };
 
 Note legend3[] = {
-{REST,"",2},{B5,"B5",1},{C6,"C6",1},{B5,"B5",1},{A5,"A5",1},
-{E5,"E5",2},{C5,"C5",2},{E5,"E5",2},
-{REST,"",2},{B5,"B5",1},{C6,"C6",1},{B5,"B5",1},{A5,"A5",1},
-{D6,"D6",6},
-{REST,"",2},{B5,"B5",1},{C6,"C6",1},{B5,"B5",1},{A5,"A5",1},
-{B5,"B5",4},{C6,"C6",2},
-{G5,"G5",2},{G5,"G5",1},{F5,"F5",1},{E5,"E5",1},{F5,"F5",1},
-{E5,"E5",6},
-{REST,"",2},{E5,"E5",1},{F5,"F5",1},{E5,"E5",1},{D5,"D5",1},
-{AS4,"Bb4",2},{F4,"F4",2},{F5,"F5",2},
-{E5,"E5",3},{D5,"D5",1},{C5,"C5",1},{D5,"D5",1},
-{E5,"E5",4},{C5,"C5",2},
-{DS5,"Eb5",2},{B4,"B4",2},{A4,"A4",2},
-{DS4,"Eb4",4},{DS5,"Eb5",2},
-{E5,"E5",12},
-{REST,"",12},
+{REST,"",8},{B5,"B5",4},{C6,"C6",4},{B5,"B5",4},{A5,"A5",4},
+{E5,"E5",8},{C5,"C5",8},{E5,"E5",8},
+{REST,"",8},{B5,"B5",4},{C6,"C6",4},{B5,"B5",4},{A5,"A5",4},
+{D6,"D6",24},
+{REST,"",8},{B5,"B5",4},{C6,"C6",4},{B5,"B5",4},{A5,"A5",4},
+{B5,"B5",16},{C6,"C6",8},
+{G5,"G5",8},{G5,"G5",4},{F5,"F5",4},{E5,"E5",4},{F5,"F5",4},
+{E5,"E5",24},
+{REST,"",8},{E5,"E5",4},{F5,"F5",4},{E5,"E5",4},{D5,"D5",4},
+{AS4,"Bb4",8},{F4,"F4",8},{F5,"F5",8},
+{E5,"E5",12},{D5,"D5",4},{C5,"C5",4},{D5,"D5",4},
+{E5,"E5",16},{C5,"C5",8},
+{DS5,"Eb5",8},{B4,"B4",8},{A4,"A4",8},
+{DS4,"Eb4",16},{DS5,"Eb5",8},
+{E5,"E5",24},
+{REST,"",24},
+{REST,"",24},
 };
 
 Note legendBass3[] = {
+{A3,"A3",8},{E4,"E4",8},{E4,"E4",8},
+{A3,"A3",8},{E4,"E4",8},{E4,"E4",8},
+{G3,"G3",8},{E4,"E4",8},{E4,"E4",8},
+{G3,"G3",8},{E4,"E4",8},{E4,"E4",8},
+{F3,"F3",8},{E4,"E4",8},{E4,"E4",8},
+{F3,"F3",8},{C4,"C4",8},{E4,"E4",8},
+{C4,"C4",8},{G4,"G4",8},{G4,"G4",8},
+{G4,"G4",4},{F4,"F4",1},{G4,"G4",1},{F4,"F4",2},{E4,"E4",4},{F4,"F4",4},{E4,"E4",4},{D4,"D4",4},
+{AS3,"Bb3",8},{D4,"D4",8},{F4,"F4",8},
+{AS3,"Bb3",8},{D4,"D4",8},{F4,"F4",8},
+{A3,"A3",8},{C4,"C4",8},{E4,"E4",8},
+{A3,"A3",8},{C4,"C4",8},{E4,"E4",8},
+{B3,"B3",8},{FS4,"F#4",8},{FS4,"F#4",8},
+{B3,"B3",8},{FS4,"F#4",8},{FS4,"F#4",8},
+{E4,"E4",8},{REST,"",4},{B4,"B4",8},{REST,"",4},
+{B4,"B4",8},{REST,"",4},{E4,"E4",36},
+{REST,"",24},
 };
 
 Note megalovania[] = {
@@ -357,9 +375,9 @@ Song_t TheLegendBass0 = {"THE LEGEND - Toby Fox (0/3)", legendBass0, 20, 272, 8,
 Song_t TheLegend1 = {"THE LEGEND - Toby Fox (1/3)", legend1, 96, 136, 16, 33, G3, GS6};
 Song_t TheLegendBass1 = {"THE LEGEND - Toby Fox (1/3)", legendBass1, 137, 136, 16, 33, C2, GS6};
 Song_t TheLegend2 = {"THE LEGEND - Toby Fox (2/3)", legend2, 38, 136, 16, 8, G3, GS6};
-Song_t TheLegendBass2 = {"THE LEGEND - Toby Fox (2/3)", legendBass2, 20, 136, 16, 8, G3, GS6};
-Song_t TheLegend3 = {"THE LEGEND - Toby Fox (3/3)", legend3, 48, 182, 6, 18, G3, GS6};
-Song_t TheLegendBass3 = {"THE LEGEND - Toby Fox (3/3)", legendBass3, 48, 182, 6, 18, G3, GS6};
+Song_t TheLegendBass2 = {"THE LEGEND - Toby Fox (2/3)", legendBass2, 20, 136, 16, 8, E2, GS6};
+Song_t TheLegend3 = {"THE LEGEND - Toby Fox (3/3)", legend3, 49, 46, 24, 18, G3, GS6};
+Song_t TheLegendBass3 = {"THE LEGEND - Toby Fox (3/3)", legendBass3, 55, 46, 24, 18, F3, GS6};
 Song_t FreedomMotif = {"FREEDOM MOTIF", freedomMotif, 31, 100, 16, 8, E4, C6};
 
 Song_t *SongPtrs[NUM_TRACKS] = {

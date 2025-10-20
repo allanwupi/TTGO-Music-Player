@@ -53,14 +53,13 @@ void setup()
     ledcAttachPin(TREBLE_BUZZER, TREBLE);
     ledcAttachPin(BASS_BUZZER, BASS);
     userSelectSong(tft);
-    tft->setTextSize(1);
-    for (int i = 0; i < NUM_TRACKS; i++)
-        convertToAbsoluteTime(*SongPtrs[i]);
+    for (int i = 0; i < NUM_TRACKS; i++) convertToAbsoluteTime(*SongPtrs[i]);
 }
 
 void loop()
 {
     unsigned long runTime = 0;
+    tft->setTextSize(1);
     switch (chosenSong) {
         case (0):
             playTracks(Megalovania, MegalovaniaBass, tft);
@@ -69,13 +68,14 @@ void loop()
             runTime = playTracks(TheLegend0, TheLegendBass0, tft, 2, 0);
             runTime = playTracks(TheLegend1, TheLegendBass1, tft, 2, runTime);
             runTime = playTracks(TheLegend2, TheLegendBass2, tft, 2, runTime);
-            runTime = playSingleTrack(TheLegend3, tft, 2, runTime);
+            runTime = playTracks(TheLegend3, TheLegendBass3, tft, 2, runTime);
             break;
         case (2):
             playSingleTrack(FreedomMotif, tft, 4);
            break;
         default:
             // TODO: Put an error message here?
+            tft->setTextSize(2);
             userSelectSong(tft);
     }
 }
