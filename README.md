@@ -3,7 +3,7 @@ I found a passive piezo buzzer and I wanted it to play Megalovania, so I program
 
 ### Current Features
 - Play sequences of notes (integer pitch and duration) on a connected piezo buzzer
-- Megalovania (melody and bass line) is completely playable, more songs to come
+- Two fully playable songs (melody and bass line): MEGALOVANIA, THE LEGEND
 - Top line shows play time, bar number, note pitch, and song title (max. 30 characters)
 - Rest of the screen (320x150 pixels) is taken up by a 'MIDI'-like visualiser
 - Can re-orientate screen on startup menu
