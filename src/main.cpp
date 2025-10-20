@@ -73,7 +73,6 @@ void loop()
             playSingleTrack(FreedomMotif, tft, 4);
            break;
         default:
-            // TODO: Put an error message here?
             tft->setTextSize(2);
             userSelectSong(tft);
     }
