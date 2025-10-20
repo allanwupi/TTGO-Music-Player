@@ -67,8 +67,9 @@ void loop()
             playSong(TheLegend2, 2, tft);
             playSong(TheLegend3, 4, tft);
             break;
-        case (3):
+        case (2):
             playSong(FreedomMotif, 2, tft);
+           break;
         default:
             // TODO: Put an error message here?
             delay(1000);
