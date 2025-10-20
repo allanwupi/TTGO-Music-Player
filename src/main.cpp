@@ -7,18 +7,12 @@ const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v1.0 ";
 
 #define TREBLE 1
 #define BASS 2
-#define TREBLE_BUZZER 1
-#define BASS_BUZZER 3
-
-#define LEFT_BUTTON 0
-#define RIGHT_BUTTON 14
+#define TREBLE_BUZZER 43
+#define BASS_BUZZER 1
 
 #define MENU_X_DATUM    10
 #define MENU_Y_DATUM    30
 #define BUFFER_CHARS    50
-
-#define LEFT_BUTTON     0
-#define RIGHT_BUTTON    14
 
 #define PRIMARY_TEXT_COLOUR     TFT_WHITE
 #define HIGH_EMPHASIS_COLOUR    TFT_GOLD
@@ -27,6 +21,9 @@ const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v1.0 ";
 
 TFT_eSPI TFT = TFT_eSPI();
 TFT_eSPI *tft;
+
+int UP_BUTTON = 0;
+int DOWN_BUTTON = 14;
 
 int screenOrientation = 3;
 int chosenSong = 0;
@@ -77,8 +74,8 @@ void loop()
 }
 
 void userSelectSong(TFT_eSPI *tft) {
-    int prevLeft = 0, prevRight = 0;
-    int currLeft = 0, currRight = 0;
+    int prevUp = 0, prevDown = 0;
+    int currUp = 0, currDown = 0;
     int prevChoice = -1;
     static int currChoice = 0;
     bool startPlayer = false;
@@ -88,15 +85,19 @@ void userSelectSong(TFT_eSPI *tft) {
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
 
     while (!startPlayer) {
-        currLeft = !digitalRead(LEFT_BUTTON);
-        currRight = !digitalRead(RIGHT_BUTTON);
-        if (prevLeft && !currLeft) {
+        currUp = !digitalRead(UP_BUTTON);
+        currDown = !digitalRead(DOWN_BUTTON);
+        if (prevUp && !currUp) {
             if (currChoice == NUM_SONGS) {
+                int temp;
+                temp = UP_BUTTON;
+                UP_BUTTON = DOWN_BUTTON;
+                DOWN_BUTTON = temp;
                 screenOrientation = (screenOrientation > 1) ? 1 : 3;
                 tft->setRotation(screenOrientation);
             }
             startPlayer = true;
-        } else if (prevRight && !currRight) {
+        } else if (prevDown && !currDown) {
             currChoice = (currChoice + 1) % (NUM_SONGS+1);
         }
 
@@ -114,8 +115,8 @@ void userSelectSong(TFT_eSPI *tft) {
         tft->setTextColor(PRIMARY_TEXT_COLOUR, BACKGROUND_COLOUR);
         prevChoice = currChoice;
 
-        prevLeft = currLeft;
-        prevRight = currRight;
+        prevUp = currUp;
+        prevDown = currDown;
     }
     tft->fillScreen(BACKGROUND_COLOUR);
     chosenSong = currChoice;
