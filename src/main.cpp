@@ -3,7 +3,7 @@
 #include "songs.h"
 #include "pitches.h"
 
-const char *PROGRAM_NAME = " TTGO MUSIC PLAYER v1.0 ";
+const char *PROGRAM_NAME = " TTGO MUSIC PLAYER v3.0 ";
 
 #define TREBLE 1
 #define BASS 2
@@ -29,7 +29,9 @@ int screenOrientation = 3;
 int chosenSong = 0;
 
 void userSelectSong(TFT_eSPI *tft);
-void playSong(Song_t song, int barsToDisplay, TFT_eSPI *tft);
+void convertToAbsoluteTime(Song_t song);
+void playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay = 1);
+void playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay = 1);
 
 void setup()
 {
@@ -44,28 +46,31 @@ void setup()
     tft->setTextSize(2);
     tft->setRotation(screenOrientation);
     tft->fillScreen(BACKGROUND_COLOUR);
-	ledcSetup(TREBLE, 10000, 16);
-	ledcSetup(BASS, 10000, 16);
+	ledcSetup(TREBLE, 20000, 16);
+	ledcSetup(BASS, 20000, 16);
 	ledcAttachPin(TREBLE_BUZZER, TREBLE);
 	ledcAttachPin(BASS_BUZZER, BASS);
     userSelectSong(tft);
     //Serial.begin(115200);
+    for (int i = 0; i < NUM_TRACKS; i++)
+        convertToAbsoluteTime(*SongPtrs[i]);
+    tft->setTextSize(1);
 }
 
 void loop()
 {
     switch (chosenSong) {
         case (0):
-            playSong(Megalovania, 1, tft);
+            playTracks(Megalovania, MegalovaniaBass, tft);
             break;
         case (1):
-            playSong(TheLegend0, 4, tft);
-            playSong(TheLegend1, 4, tft);
-            playSong(TheLegend2, 2, tft);
-            playSong(TheLegend3, 4, tft);
+            playSingleTrack(TheLegend0, tft, 4);
+            playSingleTrack(TheLegend1, tft, 4);
+            playSingleTrack(TheLegend2, tft, 2);
+            playSingleTrack(TheLegend3, tft, 4);
             break;
         case (2):
-            playSong(FreedomMotif, 4, tft);
+            playSingleTrack(FreedomMotif, tft, 4);
            break;
         default:
             // TODO: Put an error message here?
@@ -122,9 +127,18 @@ void userSelectSong(TFT_eSPI *tft) {
     chosenSong = currChoice;
 }
 
-void playSong(Song_t song, int barsToDisplay, TFT_eSPI *tft)
-{
-    int freq, n, minN, maxN, T;
+void convertToAbsoluteTime(Song_t song) {
+    int Time = 0; // Absolute time steps
+    for (int i = 0; i < song.numNotes; i++) {
+        Time += song.notes[i].noteLength;
+        song.notes[i].noteLength = Time;
+    }
+}
+
+
+void playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay) {
+    int freq1 = 0, freq2 = 0;
+    int n, minN, maxN;
     for (n = 1 ; n <= NUM_FREQS ; n++) {
         if (song.minFreq == TONE_INDEX[n]) minN = n;
         if (song.maxFreq == TONE_INDEX[n]) {
@@ -132,49 +146,153 @@ void playSong(Song_t song, int barsToDisplay, TFT_eSPI *tft)
             break;
         }
     }
-    const int dx = 320/(song.bar * barsToDisplay);
-    const int dy = 150/(maxN - minN);
     const int T0 = song.period;
-    const char *noteName;
-    int pos = 0;
-    int bars = 0;
-    int act_delay;
-    tft->setCursor(0, 0);
-    tft->printf("   /%-3d:     %.13s", song.numBars, song.name);
+    const int divisions = song.bar * barsToDisplay;
+    const int dx = 320/divisions;
+    const int dy = 150/(maxN - minN);
+    const char *noteName = song.notes[0].noteName;
+    tft->setCursor(7,7);
+    tft->printf("0:00  00/00  ---  %s", song.name);
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
-    unsigned long startTime;
-    for (int i = 0, k = 0; i < song.numNotes; i++) {
-        startTime = millis();
-        freq = song.notes[i].pitch;
-        noteName = song.notes[i].noteName;
-        T = song.notes[i].noteLength * T0;
-        tft->setCursor(0, 0);
-        if (pos % song.bar == 0) {
+    int now = 0, next = 0, bars = 0, i = 0, j = 0;
+    bool finalNote = false;
+    bool finished = false;
+    bool printed = false;
+    int duration, reqDelay;
+    int minutes = 0, seconds = 0, prevSeconds = -1;
+    unsigned long startTime = millis();
+    unsigned long playTime = millis();
+    while (!finished) {
+        if (now % song.bar == 0 && !printed) {
+            if (now % divisions == 0) tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
             bars++;
-            k = !k;
         }
-        if (pos % (barsToDisplay*song.bar) == 0) {
-            tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
-            pos = 0;
+        minutes = (millis() - playTime) / 60000;
+        seconds = ((millis() - playTime) / 1000) % 60;
+        if (seconds != prevSeconds) {
+            tft->setCursor(7,7);
+            tft->printf("%d:%02d", minutes, seconds);
+            prevSeconds = seconds;
         }
-        if (freq) {
-            ledcWriteTone(TREBLE, freq);
-            for (n = minN ; n <= maxN ; n++) if (freq == TONE_INDEX[n]) break;
-            tft->drawFastHLine(pos*dx, 169-dy*(n-minN), dx*(T/T0)-2, HIGH_EMPHASIS_COLOUR);
-            if (song.overflow)
-                tft->printf("%3d/%-3d: %-3s %.13s", bars, song.numBars, noteName, (k) ? song.name : song.overflow);
-            else
-                tft->printf("%3d/%-3d: %-3s %.13s", bars, song.numBars, noteName, song.name);
-        } else {
-            ledcWriteTone(TREBLE, 0);
-            //tft->drawFastHLine(pos*dx, 169, dx*(T/T0)-2, LOW_EMPHASIS_COLOUR);
-            tft->printf("%3d/%-3d: ", bars, song.numBars);
+        if (now == next && !printed) {
+            printed = true;
+            if (!finalNote) {
+                duration = (i > 0) ? (song.notes[i].noteLength - song.notes[i-1].noteLength) : song.notes[i].noteLength;
+                freq1 = song.notes[i].pitch;
+                if (freq1) {
+                    ledcWriteTone(TREBLE, freq1);
+                    for (n = minN ; n <= maxN ; n++) if (freq1 == TONE_INDEX[n]) break;
+                    tft->drawFastHLine((now%divisions)*dx, 169-dy*(n-minN), dx*duration-2, HIGH_EMPHASIS_COLOUR);
+                    noteName = song.notes[i].noteName;
+                    tft->setCursor(7,7);
+                    tft->printf("%d:%02d  %2d/%-2d  %-3s", minutes, seconds, bars, song.numBars, noteName);
+                }
+                else ledcWriteTone(TREBLE, 0);
+                next = song.notes[i].noteLength;
+                if (i == song.numNotes-1) finalNote = true;
+                else i++;
+            } else {
+                ledcWriteTone(TREBLE, 0);
+                finished = true;
+            }
         }
-        pos += song.notes[i].noteLength;
-        bars += (song.notes[i].noteLength > song.bar); //temporary fix (will need rework?)
-        act_delay = T - (millis() - startTime);
-        if (act_delay > 0) delay(act_delay);
+        if (millis() - startTime > T0) {
+            printed = false;
+            now++;
+            startTime = millis();
+        }
     }
-    ledcWriteTone(TREBLE, 0);
-    //ledcWriteTone(BASS, 0);
+}
+
+void playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay) {
+    int freq1 = 0, freq2 = 0;
+    int n, minN, maxN;
+    for (n = 1 ; n <= NUM_FREQS ; n++) {
+        if (bass.minFreq == TONE_INDEX[n]) minN = n;
+        if (song.maxFreq == TONE_INDEX[n]) {
+            maxN = n;
+            break;
+        }
+    }
+    const int T0 = song.period;
+    const int divisions = song.bar * barsToDisplay;
+    const int dx = 320/divisions;
+    const int dy = 150/(maxN - minN);
+    const char *trebleNoteName = song.notes[0].noteName;
+    const char *bassNoteName = bass.notes[0].noteName;
+    tft->setCursor(7,7);
+    tft->printf("0:00  00/00  ---.---  %s", song.name);
+    tft->drawFastHLine(0, 20, 320, TFT_WHITE);
+    int now = 0, bars = 0, i = 0, j = 0;
+    int nextTreble = 0, nextBass = 0;
+    bool lastTrebleNote = false, lastBassNote = false;
+    bool finishedTreble = false, finishedBass = false;
+    bool wroteTreble = false, wroteBass = false;
+    int duration, reqDelay;
+    int minutes = 0, seconds = 0, prevSeconds = -1;
+    unsigned long startTime = millis();
+    unsigned long playTime = millis();
+    while (!finishedTreble || !finishedBass) {
+        if (now % song.bar == 0 && !wroteTreble && !wroteBass) {
+            if (now % divisions == 0) tft->fillRect(0, 21, 320, 149, TFT_BLACK); 
+            bars++;
+        }
+        minutes = (millis() - playTime) / 60000;
+        seconds = ((millis() - playTime) / 1000) % 60;
+        if (seconds != prevSeconds) {
+            tft->setCursor(7,7);
+            tft->printf("%d:%02d", minutes, seconds);
+            prevSeconds = seconds;
+        }
+        if (now == nextTreble && !wroteTreble) {
+            wroteTreble = true;
+            if (!lastTrebleNote) {
+                duration = (i > 0) ? (song.notes[i].noteLength - song.notes[i-1].noteLength) : song.notes[i].noteLength;
+                freq1 = song.notes[i].pitch;
+                if (freq1) {
+                    ledcWriteTone(TREBLE, freq1);
+                    for (n = minN ; n <= maxN ; n++) if (freq1 == TONE_INDEX[n]) break;
+                    tft->drawFastHLine((now%divisions)*dx, 169-dy*(n-minN), dx*duration-2, HIGH_EMPHASIS_COLOUR);
+                    trebleNoteName = song.notes[i].noteName;
+                    tft->setCursor(7,7);
+                    tft->printf("%d:%02d  %2d/%-2d  %-3s.%-3s", minutes, seconds, bars, song.numBars, trebleNoteName, bassNoteName);
+                }
+                else ledcWriteTone(TREBLE, 0);
+                nextTreble = song.notes[i].noteLength;
+                if (i == song.numNotes-1) lastTrebleNote = true;
+                else i++;
+            } else {
+                ledcWriteTone(TREBLE, 0);
+                finishedTreble = true;
+            }
+        }
+        if (now == nextBass && !wroteBass) {
+            wroteBass = true;
+            if (!lastBassNote) {
+                duration = (j > 0) ? (bass.notes[j].noteLength - bass.notes[j-1].noteLength) : bass.notes[j].noteLength;
+                freq2 = bass.notes[j].pitch;
+                if (freq2) {
+                    ledcWriteTone(BASS, freq2);
+                    for (n = minN ; n <= maxN ; n++) if (freq2 == TONE_INDEX[n]) break;
+                    tft->drawFastHLine((now%divisions)*dx, 169-dy*(n-minN), dx*duration-2, TFT_DARKGREY);
+                    bassNoteName = bass.notes[j].noteName;
+                    tft->setCursor(7,7);
+                    tft->printf("%d:%02d  %2d/%-2d  %-3s.%-3s", minutes, seconds, bars, song.numBars, trebleNoteName, bassNoteName);
+                }
+                else ledcWriteTone(BASS, 0);
+                nextBass = bass.notes[j].noteLength;
+                if (j == bass.numNotes-1) lastBassNote = true;
+                else j++;
+            } else {
+                ledcWriteTone(BASS, 0);
+                finishedBass = true;
+            }
+        }
+        if (millis() - startTime > T0) {
+            wroteTreble = false;
+            wroteBass = false;
+            now++;
+            startTime = millis();
+        }
+    }
 }

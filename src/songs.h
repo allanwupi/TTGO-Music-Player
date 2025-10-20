@@ -4,6 +4,7 @@
 
 // Note: we can only fit 5 songs onto the screen at once
 #define NUM_SONGS 5
+#define NUM_TRACKS 7
 
 extern const char *SONG_DESCRIPTIONS[NUM_SONGS+1];
 
@@ -14,8 +15,7 @@ typedef struct {
 } Note;
 
 typedef struct {
-    const char *name; // Song name (13 characters maximum)
-	const char *overflow; // Remainder of song name (13 characters maximum)
+    const char *name; // Song name (30 characters maximum)
     Note *notes; // Array of notes {freqIndex, noteLength}
     int numNotes; // Size of note array
     int period; // Millisecond duration of shortest note
@@ -38,5 +38,8 @@ extern Song_t TheLegend1;
 extern Song_t TheLegend2;
 extern Song_t TheLegend3;
 extern Song_t FreedomMotif;
+
+extern Song_t MegalovaniaBass;
+extern Song_t *SongPtrs[NUM_TRACKS];
 
 #endif
