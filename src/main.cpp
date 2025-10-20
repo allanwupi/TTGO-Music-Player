@@ -47,8 +47,8 @@ void setup()
     tft->setTextSize(2);
     tft->setRotation(screenOrientation);
     tft->fillScreen(BACKGROUND_COLOUR);
-	ledcSetup(TREBLE, 10000, 16);
-	ledcSetup(BASS, 10000, 16);
+	ledcSetup(TREBLE, 20000, 16);
+	ledcSetup(BASS, 20000, 16);
 	ledcAttachPin(TREBLE_BUZZER, TREBLE);
 	ledcAttachPin(BASS_BUZZER, BASS);
     userSelectSong(tft);
@@ -231,7 +231,7 @@ void playTracks(Song_t song, Song_t bass, TFT_eSPI *tft) {
                     tft->drawFastHLine((now%song.bar)*dx, 169-dy*(n-minN), dx*duration-2, HIGH_EMPHASIS_COLOUR);
                     trebleNoteName = song.notes[i].noteName;
                     tft->setCursor(0, 0);
-                    tft->printf("%2d/%-2d:%3s %-3s %.12s", bars, song.numBars, trebleNoteName, bassNoteName, song.name);
+                    tft->printf("%2d/%-2d:%-3s %-3s %.12s", bars, song.numBars, trebleNoteName, bassNoteName, song.name);
                 }
                 else ledcWriteTone(TREBLE, 0);
                 nextTreble = song.notes[i].noteLength;
@@ -252,7 +252,7 @@ void playTracks(Song_t song, Song_t bass, TFT_eSPI *tft) {
                     tft->drawFastHLine((now%song.bar)*dx, 169-dy*(n-minN), dx*duration-2, TFT_DARKGREY);
                     bassNoteName = bass.notes[j].noteName;
                     tft->setCursor(0, 0);
-                    tft->printf("%2d/%-2d:%3s %-3s %.12s", bars, song.numBars, trebleNoteName, bassNoteName, song.name);
+                    tft->printf("%2d/%-2d:%-3s %-3s %.12s", bars, song.numBars, trebleNoteName, bassNoteName, song.name);
                 }
                 else ledcWriteTone(BASS, 0);
                 nextBass = bass.notes[j].noteLength;
@@ -265,7 +265,7 @@ void playTracks(Song_t song, Song_t bass, TFT_eSPI *tft) {
         }
         reqDelay = T0 - (millis() - startTime);
         if (reqDelay > 0) delay(reqDelay);
-        Serial.println(reqDelay);
+        //Serial.println(reqDelay);
         now++;
     }
 }
