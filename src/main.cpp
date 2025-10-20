@@ -30,6 +30,7 @@ int chosenSong = 0;
 
 void userSelectSong(TFT_eSPI *tft);
 void playSong(Song_t song, int barsToDisplay, TFT_eSPI *tft);
+void convertToAbsoluteTime(Song_t song);
 
 void setup()
 {
@@ -177,4 +178,80 @@ void playSong(Song_t song, int barsToDisplay, TFT_eSPI *tft)
     }
     ledcWriteTone(TREBLE, 0);
     //ledcWriteTone(BASS, 0);
+}
+
+void convertToAbsoluteTime(Song_t song) {
+    int Time = 0; // Absolute time steps
+    for (int i = 0; i < song.numNotes; i++) {
+        Time += song.notes[i].noteLength;
+        song.notes[i].noteLength = Time;
+    }
+}
+
+void playTracks(Song_t song, Song_t bass, int barsToDisplay) {
+    int freq, n, minN, maxN, T;
+    for (n = 1 ; n <= NUM_FREQS ; n++) {
+        if (bass.minFreq == TONE_INDEX[n]) minN = n;
+        if (song.maxFreq == TONE_INDEX[n]) {
+            maxN = n;
+            break;
+        }
+    }
+    //const int dx = 320/(song.bar * barsToDisplay);
+    //const int dy = 150/(maxN - minN);
+    const int T0 = song.period;
+    //const char *noteName;
+
+    int bars = 0;
+    int reqDelay;
+    unsigned long startTime;
+
+    int nextTrebleNote;
+    int nextBassNote;
+    int now = 0;
+    int i = 0, j = 0;
+    while (i < song.numNotes && j < bass.numNotes) {
+        startTime = millis();
+        if (now % song.bar == 0) bars++; 
+        if (now == nextTrebleNote) {
+            freq = song.notes[i].pitch;
+            if (freq) ledcWriteTone(TREBLE, freq);
+            else ledcWriteTone(TREBLE, 0);
+            i++;
+            nextTrebleNote = song.notes[i].noteLength;
+        }
+        if (now == nextBassNote) {
+            freq = bass.notes[i].pitch;
+            if (freq) ledcWriteTone(BASS, freq);
+            else ledcWriteTone(BASS, 0);
+            j++;
+            nextBassNote = bass.notes[j].noteLength;
+        }
+        reqDelay = T0 - (millis() - startTime);
+        if (reqDelay > 0) delay(reqDelay);
+        now++;
+    }
+    ledcWriteTone(TREBLE, 0);
+    ledcWriteTone(BASS, 0);
+    /*
+    freq = song.notes[i].pitch;
+    noteName = song.notes[i].noteName;
+    T = song.notes[i].noteLength * T0;
+
+    if (pos % song.bar == 0) {
+        bars++;
+        k = !k;
+    }
+    if (pos % (barsToDisplay*song.bar) == 0) {
+        pos = 0;
+    }
+
+    if (freq) {
+        ledcWriteTone(TREBLE, freq);
+    } else {
+        ledcWriteTone(TREBLE, 0);
+    }
+    pos += song.notes[i].noteLength;
+    bars += (song.notes[i].noteLength > song.bar);    
+    */
 }
