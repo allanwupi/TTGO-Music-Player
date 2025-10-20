@@ -1,3 +1,4 @@
+
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include "songs.h"
@@ -47,10 +48,10 @@ void setup()
     tft->setTextSize(2);
     tft->setRotation(screenOrientation);
     tft->fillScreen(BACKGROUND_COLOUR);
-	ledcSetup(TREBLE, 20000, 16);
-	ledcSetup(BASS, 20000, 16);
-	ledcAttachPin(TREBLE_BUZZER, TREBLE);
-	ledcAttachPin(BASS_BUZZER, BASS);
+    ledcSetup(TREBLE, 20000, 16);
+    ledcSetup(BASS, 20000, 16);
+    ledcAttachPin(TREBLE_BUZZER, TREBLE);
+    ledcAttachPin(BASS_BUZZER, BASS);
     userSelectSong(tft);
     tft->setTextSize(1);
     for (int i = 0; i < NUM_TRACKS; i++)
@@ -65,8 +66,9 @@ void loop()
             playTracks(Megalovania, MegalovaniaBass, tft);
             break;
         case (1):
-            runTime = playSingleTrack(TheLegend1, tft, 2, 0);
-            runTime = playSingleTrack(TheLegend2, tft, 2, runTime);
+            runTime = playTracks(TheLegend0, TheLegendBass0, tft, 2, 0);
+            runTime = playTracks(TheLegend1, TheLegendBass1, tft, 2, runTime);
+            runTime = playTracks(TheLegend2, TheLegendBass2, tft, 2, runTime);
             runTime = playSingleTrack(TheLegend3, tft, 2, runTime);
             break;
         case (2):
