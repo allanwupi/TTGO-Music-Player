@@ -40,7 +40,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
 
 void setup()
 {
-    Serial.begin(115200);
+    //Serial.begin(115200);
     pinMode(TREBLE_BUZZER, OUTPUT);
     pinMode(BASS_BUZZER, OUTPUT);
     pinMode(15, OUTPUT);
@@ -250,7 +250,7 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
             startTime = millis();
         }
     }
-    return minutes*60000 + seconds*1000;
+    return millis() - playTime + elapsed;
 }
 
 unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsed) {
@@ -271,7 +271,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
     int nextTreble = 0, nextBass = 0;
     bool lastTrebleNote = false, lastBassNote = false;
     bool finishedTreble = false, finishedBass = false;
-    bool movedBar = false, wroteTreble = false, wroteBass = false;
+    bool movedBar = false, drewTreble = false, drewBass = false;
     int duration, reqDelay;
     int minutes = elapsed/60000, seconds = (elapsed/1000)%60, prevSeconds = -1;
     unsigned long startTime = millis();
@@ -291,8 +291,8 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
             tft->printf("%d:%02d  %2d/%-2d", minutes, seconds, bars, song.numBars);
             movedBar = true;
         }
-        if (now == nextTreble && !wroteTreble) {
-            wroteTreble = true;
+        if (now == nextTreble && !drewTreble) {
+            drewTreble = true;
             if (!lastTrebleNote) {
                 duration = (i > 0) ? (song.notes[i].noteLength - song.notes[i-1].noteLength) : song.notes[i].noteLength;
                 freq1 = song.notes[i].pitch;
@@ -313,8 +313,8 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
                 finishedTreble = true;
             }
         }
-        if (now == nextBass && !wroteBass) {
-            wroteBass = true;
+        if (now == nextBass && !drewBass) {
+            drewBass = true;
             if (!lastBassNote) {
                 duration = (j > 0) ? (bass.notes[j].noteLength - bass.notes[j-1].noteLength) : bass.notes[j].noteLength;
                 freq2 = bass.notes[j].pitch;
@@ -337,12 +337,11 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
         }
         if (millis() - startTime >= T0) {
             movedBar = false;
-            wroteTreble = false;
-            wroteBass = false;
+            drewTreble = false;
+            drewBass = false;
             now++;
-            Serial.println(millis()-startTime);
             startTime = millis();
         }
     }
-    return minutes*60000 + seconds*1000;
+    return millis() - playTime + elapsed;
 }
