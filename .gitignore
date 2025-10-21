@@ -9,5 +9,6 @@ test/test.cpp
 test/songPlayer.cpp
 MusicPlayerDev.code-workspace
 .vscode/extensions.json
+.vscode/settings.json
 include/README
 lib/README
