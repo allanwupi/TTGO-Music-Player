@@ -9,14 +9,25 @@ const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v3.3";
 const char *AUTHOR_DETAILS = " by Allan Wu (21/20/2025)";
 Preferences menuPrefs;
 
-#define TREBLE 1
-#define BASS 2
-#define TREBLE_BUZZER 1
-#define BASS_BUZZER 2
-
 int SCREEN_LENGTH = 320;
 int SCREEN_WIDTH = 170;
 int HEADER_WIDTH = 20;
+
+TFT_eSPI TFT = TFT_eSPI();
+TFT_eSPI *tft;
+
+int UP_BUTTON;
+int DOWN_BUTTON;
+int screenOrientation;
+int chosenSong;
+
+#define DEFAULT_ORIENTATION 3
+#define DEFAULT_SELECTION 0
+
+#define TREBLE 1        // LEDC channel 1
+#define BASS 2          // LEDC channel 2
+#define TREBLE_BUZZER 1 // Output pin 1
+#define BASS_BUZZER 2   // Output pin 2
 
 #define MENU_X_DATUM    10
 #define MENU_SPACING    14
@@ -30,16 +41,6 @@ int HEADER_WIDTH = 20;
 #define LO_COLOUR           TFT_DARKCYAN    // Bass track
 #define BG_COLOUR           TFT_BLACK       // Background
 
-TFT_eSPI TFT = TFT_eSPI();
-TFT_eSPI *tft;
-
-int UP_BUTTON;
-int DOWN_BUTTON;
-int screenOrientation;
-int chosenSong;
-#define DEFAULT_ORIENTATION 3
-#define DEFAULT_SELECTION 0
-
 void userSelectSong(int defaultChoice, TFT_eSPI *tft);
 void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay = false);
 unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
@@ -47,7 +48,6 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
 
 void setup()
 {
-    //Serial.begin(115200);
     pinMode(TREBLE_BUZZER, OUTPUT);
     pinMode(BASS_BUZZER, OUTPUT);
     pinMode(15, OUTPUT);
@@ -276,8 +276,7 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
             }
         }
         if (millis() - startTime >= T0) {
-            movedBar = false;
-            printed = false;
+            movedBar = false, printed = false;
             now++;
             startTime = millis();
         }
@@ -305,7 +304,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
     tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
     int now = 0, bars = 0, i = 0, j = 0;
     int nextTreble = 0, nextBass = 0;
-    bool lastTrebleNote = false, lastBassNote = false;
+    bool finalTrebleNote = false, finalBassNote = false;
     bool finishedTreble = false, finishedBass = false;
     bool movedBar = false, drewTreble = false, drewBass = false;
     int duration;
@@ -329,7 +328,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
         }
         if (now == nextTreble && !drewTreble) {
             drewTreble = true;
-            if (!lastTrebleNote) {
+            if (!finalTrebleNote) {
                 duration = (i > 0) ? (song.notes[i].noteLength - song.notes[i-1].noteLength) : song.notes[i].noteLength;
                 freq1 = song.notes[i].pitch;
                 if (freq1) {
@@ -342,7 +341,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
                 }
                 else ledcWriteTone(TREBLE, 0);
                 nextTreble = song.notes[i].noteLength;
-                if (i == song.numNotes-1) lastTrebleNote = true;
+                if (i == song.numNotes-1) finalTrebleNote = true;
                 else i++;
             } else {
                 ledcWriteTone(TREBLE, 0);
@@ -351,7 +350,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
         }
         if (now == nextBass && !drewBass) {
             drewBass = true;
-            if (!lastBassNote) {
+            if (!finalBassNote) {
                 duration = (j > 0) ? (bass.notes[j].noteLength - bass.notes[j-1].noteLength) : bass.notes[j].noteLength;
                 freq2 = bass.notes[j].pitch;
                 if (freq2) {
@@ -364,7 +363,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
                 }
                 else ledcWriteTone(BASS, 0);
                 nextBass = bass.notes[j].noteLength;
-                if (j == bass.numNotes-1) lastBassNote = true;
+                if (j == bass.numNotes-1) finalBassNote = true;
                 else j++;
             } else {
                 ledcWriteTone(BASS, 0);
@@ -372,9 +371,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
             }
         }
         if (millis() - startTime >= T0) {
-            movedBar = false;
-            drewTreble = false;
-            drewBass = false;
+            movedBar = false, drewTreble = false, drewBass = false;
             now++;
             startTime = millis();
         }
