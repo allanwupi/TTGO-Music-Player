@@ -5,7 +5,7 @@
 #include "songs.h"
 #include "pitches.h"
 
-const char *PROGRAM_NAME = " TTGO MUSIC PLAYER v3.1 ";
+const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v3.2    by Allan Wu (21/10/2025)";
 Preferences menuPrefs; 
 
 #define TREBLE 1
@@ -15,21 +15,20 @@ Preferences menuPrefs;
 
 #define MENU_X_DATUM    10
 #define MENU_Y_DATUM    30
-#define BUFFER_CHARS    50
+#define MENU_SPACING    14
 
 #define PRIMARY_TEXT_COLOUR     TFT_WHITE
-#define HIGH_EMPHASIS_COLOUR    TFT_GOLD
+#define HIGH_EMPHASIS_COLOUR    TFT_WHITE
 #define LOW_EMPHASIS_COLOUR     0x2965
 #define BACKGROUND_COLOUR       TFT_BLACK
 
 TFT_eSPI TFT = TFT_eSPI();
 TFT_eSPI *tft;
 
-int UP_BUTTON = 0;
-int DOWN_BUTTON = 14;
-
-int screenOrientation = 3;
-int chosenSong = 0;
+int UP_BUTTON;
+int DOWN_BUTTON;
+int screenOrientation;
+int chosenSong;
 #define DEFAULT_ORIENTATION 3
 #define DEFAULT_SELECTION 0
 
@@ -51,17 +50,20 @@ void setup()
     ledcAttachPin(BASS_BUZZER, BASS);
 
     menuPrefs.begin("menuPrefs", false);
-    if (!menuPrefs.isKey("orientation"))  menuPrefs.putInt("orientation", DEFAULT_ORIENTATION);
-    else screenOrientation = menuPrefs.getInt("orientation");
-    if (!menuPrefs.isKey("selection"))  menuPrefs.putInt("selection", DEFAULT_SELECTION);
-    else chosenSong = menuPrefs.getInt("selection");
-    
+    if (!menuPrefs.isKey("orientation")) menuPrefs.putInt("orientation", DEFAULT_ORIENTATION);
+    if (!menuPrefs.isKey("selection")) menuPrefs.putInt("selection", DEFAULT_SELECTION);
+    screenOrientation = menuPrefs.getInt("orientation");
+    chosenSong = menuPrefs.getInt("selection");
+    if (screenOrientation == 3) {
+        UP_BUTTON = 0;
+        DOWN_BUTTON = 14;
+    } else {
+        UP_BUTTON = 14;
+        DOWN_BUTTON = 0;
+    }
+
     tft = &TFT;
     tft->init();
-    tft->setTextColor(PRIMARY_TEXT_COLOUR, BACKGROUND_COLOUR);
-    tft->setTextFont(0);
-    tft->setRotation(screenOrientation);
-    tft->fillScreen(BACKGROUND_COLOUR);
 
     for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft); 
     userSelectSong(chosenSong, tft);
@@ -82,7 +84,7 @@ void loop()
         case (2):
             playSingleTrack(FreedomMotif, tft, 4);
             break;
-        case (4):
+        case (5):
             for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, true); // fall-through to refresh menu
         default:
             userSelectSong(chosenSong, tft);
@@ -95,8 +97,11 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
     int prevChoice = -1;
     int currChoice = defaultChoice;
     bool startPlayer = false;
-    tft->setTextSize(2);
-    tft->setCursor(0, 0);
+    tft->setRotation(screenOrientation);
+    tft->fillScreen(BACKGROUND_COLOUR);
+    tft->setTextColor(PRIMARY_TEXT_COLOUR, BACKGROUND_COLOUR);
+    tft->setTextSize(1);
+    tft->setCursor(MENU_X_DATUM,7);
     tft->printf(PROGRAM_NAME);
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
 
@@ -115,13 +120,13 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
             }
             startPlayer = true;
         } else if (prevDown && !currDown) {
-            currChoice = (currChoice + 1) % (NUM_SONGS+1);
+            currChoice = (currChoice+1) % (NUM_SONGS+1);
         }
         if (prevChoice != currChoice) {
             tft->setTextColor(LOW_EMPHASIS_COLOUR, BACKGROUND_COLOUR);
-            for (int i = 0; i < NUM_SONGS+1; i++) tft->drawString(SONG_DESCRIPTIONS[i], MENU_X_DATUM, MENU_Y_DATUM+23*i);
+            for (int i = 0; i < NUM_SONGS+1; i++) tft->drawString(SONG_DESCRIPTIONS[i], MENU_X_DATUM, MENU_Y_DATUM+MENU_SPACING*i);
             tft->setTextColor(HIGH_EMPHASIS_COLOUR, BACKGROUND_COLOUR);
-            tft->drawString(SONG_DESCRIPTIONS[currChoice], MENU_X_DATUM, MENU_Y_DATUM+23*currChoice);
+            tft->drawString(SONG_DESCRIPTIONS[currChoice], MENU_X_DATUM, MENU_Y_DATUM+MENU_SPACING*currChoice);
         }
         tft->setTextColor(PRIMARY_TEXT_COLOUR, BACKGROUND_COLOUR);
         prevChoice = currChoice;
@@ -230,7 +235,7 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
                 if (freq1) {
                     ledcWriteTone(TREBLE, freq1);
                     for (n = minN ; n <= maxN ; n++) if (freq1 == TONE_INDEX[n]) break;
-                    tft->drawFastHLine((now%divisions)*dx, max(22, 169-dy*(n-minN)), dx*duration-2, song.colour);
+                    tft->drawFastHLine((now%divisions)*dx, max(22, 169-dy*(n-minN)), dx*duration-2, TFT_BLUE);
                     noteName = song.notes[i].noteName;
                     tft->setCursor(7,7);
                     tft->printf("%d:%02d  %2d/%-2d  %-3s", minutes, seconds, bars, song.numBars, noteName);
@@ -265,9 +270,10 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
     const int dy = 150/(maxN - minN);
     const char *trebleNoteName = song.notes[0].noteName;
     const char *bassNoteName = bass.notes[0].noteName;
+    tft->setTextColor(TFT_BLUE, BACKGROUND_COLOUR);
     tft->setCursor(7,7);
     tft->printf("%d:%02d  --/--  ---.---  %s", elapsed/60000, (elapsed/1000)%60, song.name);
-    tft->drawFastHLine(0, 20, 320, TFT_WHITE);
+    tft->drawFastHLine(0, 20, 320, TFT_BLUE);
     int now = 0, bars = 0, i = 0, j = 0;
     int nextTreble = 0, nextBass = 0;
     bool lastTrebleNote = false, lastBassNote = false;
@@ -300,7 +306,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
                 if (freq1) {
                     ledcWriteTone(TREBLE, freq1);
                     for (n = minN ; n <= maxN ; n++) if (freq1 == TONE_INDEX[n]) break;
-                    tft->drawFastHLine((now%divisions)*dx, max(22, 169-dy*(n-minN)), dx*duration-2, song.colour);
+                    tft->drawFastHLine((now%divisions)*dx, max(22, 169-dy*(n-minN)), dx*duration-2, TFT_BLUE);
                     trebleNoteName = song.notes[i].noteName;
                     tft->setCursor(7,7);
                     tft->printf("%d:%02d  %2d/%-2d  %-3s.%-3s", minutes, seconds, bars, song.numBars, trebleNoteName, bassNoteName);
@@ -322,7 +328,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
                 if (freq2) {
                     ledcWriteTone(BASS, freq2);
                     for (n = minN ; n <= maxN ; n++) if (freq2 == TONE_INDEX[n]) break;
-                    tft->drawFastHLine((now%divisions)*dx, 169-dy*(n-minN), dx*duration-2, bass.colour);
+                    tft->drawFastHLine((now%divisions)*dx, 169-dy*(n-minN), dx*duration-2, TFT_NAVY);
                     bassNoteName = bass.notes[j].noteName;
                     tft->setCursor(7,7);
                     tft->printf("%d:%02d  %2d/%-2d  %-3s.%-3s", minutes, seconds, bars, song.numBars, trebleNoteName, bassNoteName);

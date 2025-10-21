@@ -2,8 +2,7 @@
 #define SONGS_H
 #include "pitches.h"
 
-// Note: we can only fit 5 songs onto the screen at once
-#define NUM_SONGS 5
+#define NUM_SONGS 6
 #define NUM_TRACKS 9
 
 extern const char *SONG_DESCRIPTIONS[NUM_SONGS+1];
@@ -21,7 +20,6 @@ typedef struct {
     int period; // Millisecond duration of shortest note
     int bar; // Number of shortest note durations in 1 bar
     int numBars; // Length of the song in bars
-    int colour; // RGB 565 (16-bit colour)
     int minFreq; // Used for scaling TFT, converts to index into TONE_INDEX
     int maxFreq; // Used for scaling TFT, converts to index into TONE_INDEX
     bool converted; // Notes must be converted before playing

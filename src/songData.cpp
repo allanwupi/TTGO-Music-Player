@@ -3,12 +3,13 @@
 #include <TFT_eSPI.h>
 
 const char *SONG_DESCRIPTIONS[NUM_SONGS+1] = {
-    "1. MEGALOVANIA (2:37)",
-    "2. THE LEGEND (1:47)",
-    "3. FREEDOM MOTIF (0:12)",
-    "4. ------ ",
-    "5. View Track Info",
-    "6. Rotate Screen",
+    "1. MEGALOVANIA (2m37s)",
+    "2. THE LEGEND (1m47s)",
+    "3. FREEDOM MOTIF (0m12s)",
+    "4. -------------",
+    "5. -------------",
+    "6. View Track Info",
+    "7. Rotate Screen",
 };
 
 Note legend1[] = {
@@ -365,15 +366,15 @@ Note freedomMotif[] = {
 {E5,"E5",6},{F5,"F5",1},{E5,"E5",1},{D5,"D5",8},
 };
 
-Song_t Megalovania = {"MEGALOVANIA - Toby Fox", megalovania, 766, 63, 32, 78, TFT_BLUE, D3, A6, false};
-Song_t MegalovaniaBass = {"MEGALOVANIA (Bass Line)", megalovaniaBass, 978, 63, 32, 78, TFT_NAVY, AS2, D4, false};
-Song_t TheLegend1 = {"THE LEGEND - Toby Fox (1/3)", legend1, 33, 272, 8, 9, TFT_CYAN, G3, E6, false};
-Song_t TheLegendBass1 = {"THE LEGEND (Bass Line) (1/3)", legendBass1, 20, 272, 8, 9, 0xD817, G3, E6, false};
-Song_t TheLegend2 = {"THE LEGEND - Toby Fox (2/3)", legend2, 134, 136, 16, 33, TFT_CYAN, G3, E6, false};
-Song_t TheLegendBass2 = {"THE LEGEND (Bass Line) (2/3)", legendBass2, 157, 136, 16, 33, 0xD817, C2, E6, false};
-Song_t TheLegend3 = {"THE LEGEND - Toby Fox (3/3)", legend3, 49, 46, 24, 18, TFT_CYAN, G3, E6, false};
-Song_t TheLegendBass3 = {"THE LEGEND (Bass Line) (3/3)", legendBass3, 55, 46, 24, 18, 0xD817, F3, E6, false};
-Song_t FreedomMotif = {"FREEDOM MOTIF", freedomMotif, 31, 100, 16, 8, TFT_GOLD, E4, C6, false};
+Song_t Megalovania = {"MEGALOVANIA - Toby Fox", megalovania, 766, 63, 32, 78, D3, A6, false};
+Song_t MegalovaniaBass = {"MEGALOVANIA (Bass Line)", megalovaniaBass, 978, 63, 32, 78, AS2, D4, false};
+Song_t TheLegend1 = {"THE LEGEND - Toby Fox (1/3)", legend1, 33, 272, 8, 9, G3, E6, false};
+Song_t TheLegendBass1 = {"THE LEGEND (Bass Line) (1/3)", legendBass1, 20, 272, 8, 9, G3, E6, false};
+Song_t TheLegend2 = {"THE LEGEND - Toby Fox (2/3)", legend2, 134, 136, 16, 33, G3, E6, false};
+Song_t TheLegendBass2 = {"THE LEGEND (Bass Line) (2/3)", legendBass2, 157, 136, 16, 33, C2, E6, false};
+Song_t TheLegend3 = {"THE LEGEND - Toby Fox (3/3)", legend3, 49, 46, 24, 18, G3, E6, false};
+Song_t TheLegendBass3 = {"THE LEGEND (Bass Line) (3/3)", legendBass3, 55, 46, 24, 18, F3, E6, false};
+Song_t FreedomMotif = {"FREEDOM MOTIF", freedomMotif, 31, 100, 16, 8, E4, C6, false};
 
 Song_t *SongPtrs[NUM_TRACKS] = {
     &Megalovania, &MegalovaniaBass, 
