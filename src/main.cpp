@@ -187,11 +187,15 @@ void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
     int minutes = songDuration/60000, seconds = (songDuration/1000)%60;
     if (printToDisplay) {
         tft->setCursor(0,0);
-        tft->printf("%s [%d] (%dm%02ds)\n\n", usong->name, usong->numNotes, minutes, seconds);
-        if (HEADER_WIDTH > 20) tft->printf("T0=%dms bars=%dx%d\nlo=%dHz hi=%dHz [%02d-%02d]\n\n",
-            usong->period, usong->numBars, usong->bar, minFreq, maxFreq, usong->minFreq, usong->maxFreq);
-        else tft->printf("T0=%dms bars=%dx%d lo=%dHz hi=%dHz [%02d-%02d]\n\n",
-            usong->period, usong->numBars, usong->bar, minFreq, maxFreq, usong->minFreq, usong->maxFreq);
+        if (HEADER_WIDTH > 20) {
+            tft->printf("%s\n[%d] (%dm%02ds)\n\n", usong->name, usong->numNotes, minutes, seconds);
+            tft->printf("T0=%dms bars=%dx%d\nlo=%dHz hi=%dHz [%02d-%02d]\n\n",
+                usong->period, usong->numBars, usong->bar, minFreq, maxFreq, usong->minFreq, usong->maxFreq);
+        } else {
+            tft->printf("%s [%d] (%dm%02ds)\n\n", usong->name, usong->numNotes, minutes, seconds);
+            tft->printf("T0=%dms bars=%dx%d lo=%dHz hi=%dHz [%02d-%02d]\n\n",
+                usong->period, usong->numBars, usong->bar, minFreq, maxFreq, usong->minFreq, usong->maxFreq);
+        }
         for (int k = 0; k < usong->bar; k++) {
             tft->printf("%02d:{%4d,%3s,%3d}  ", k, usong->notes[k].pitch, usong->notes[k].noteName, usong->notes[k].noteLength);
             if (HEADER_WIDTH > 20 || k % 2 == 1) tft->printf("\n");
