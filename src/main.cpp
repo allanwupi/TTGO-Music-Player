@@ -52,7 +52,7 @@ void setup()
     ledcSetup(BASS, 20000, 16);
     ledcAttachPin(TREBLE_BUZZER, TREBLE);
     ledcAttachPin(BASS_BUZZER, BASS);
-    for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, true); 
+    for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, false); 
     userSelectSong(tft);
 }
 
@@ -72,7 +72,7 @@ void loop()
             playSingleTrack(FreedomMotif, tft, 4);
             break;
         case (4):
-            for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, false); 
+            for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, true); 
             break;
         default:
             userSelectSong(tft);
