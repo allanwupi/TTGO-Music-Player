@@ -23,6 +23,7 @@ typedef struct {
     int numBars; // Length of the song in bars
     int minFreq; // Used for scaling TFT, converts to index into TONE_INDEX
     int maxFreq; // Used for scaling TFT, converts to index into TONE_INDEX
+    bool converted; // Notes must be converted before playing
 } Song_t;
 
 extern Note megalovania[];

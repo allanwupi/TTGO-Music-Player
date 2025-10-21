@@ -52,7 +52,7 @@ void setup()
     ledcSetup(BASS, 20000, 16);
     ledcAttachPin(TREBLE_BUZZER, TREBLE);
     ledcAttachPin(BASS_BUZZER, BASS);
-    for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, false); 
+    for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft); 
     userSelectSong(tft);
 }
 
@@ -72,7 +72,8 @@ void loop()
             playSingleTrack(FreedomMotif, tft, 4);
             break;
         case (4):
-            for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, true); 
+            for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, true);
+            chosenSong = -1;
             break;
         default:
             userSelectSong(tft);
@@ -131,18 +132,21 @@ void userSelectSong(TFT_eSPI *tft) {
 
 
 void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
-    int time = 0; // Convert to absolute time steps
     int minFreq = DS8;
     int maxFreq = NOTE_B0;
     int currFreq;
-    for (int i = 0; i < usong->numNotes; i++) {
-        time += usong->notes[i].noteLength;
-        usong->notes[i].noteLength = time;
-        currFreq = usong->notes[i].pitch;
-        if (currFreq && currFreq < minFreq) minFreq = currFreq;
-        if (currFreq && currFreq > maxFreq) maxFreq = currFreq;
+    if (!usong->converted) {
+        int time = 0; // Convert to absolute time steps
+        for (int i = 0; i < usong->numNotes; i++) {
+            time += usong->notes[i].noteLength;
+            usong->notes[i].noteLength = time;
+            currFreq = usong->notes[i].pitch;
+            if (currFreq && currFreq < minFreq) minFreq = currFreq;
+            if (currFreq && currFreq > maxFreq) maxFreq = currFreq;
+        }
+        usong->converted = true;
+        usong->numBars = time / (usong->bar);
     }
-    int numBars = time / usong->bar;
     int n, minN, maxN;
     for (n = 1; n <= NUM_FREQS; n++) {
         if (TONE_INDEX[n] == minFreq) minN = n;
@@ -151,15 +155,13 @@ void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
             break;
         }
     }
-    usong->numBars = numBars;
     usong->minFreq = minN;
     usong->maxFreq = maxN;
-
     if (printToDisplay) {
         tft->setCursor(0,0);
-        tft->printf("%s\n", usong->name);
-        tft->printf("[%d] T0=%d bars=%dx%d min=%-4d[%02d].max=%-4d[%02d]\n\n",
-            usong->numNotes, usong->period, usong->numBars, usong->bar, minFreq, usong->minFreq, maxFreq, usong->maxFreq);
+        tft->printf("[%d] %s\n\n", usong->numNotes, usong->name);
+        tft->printf("T0=%dms bars=%dx%d min=%-4d[%02d].max=%-4d[%02d]\n\n",
+            usong->period, usong->numBars, usong->bar, minFreq, usong->minFreq, maxFreq, usong->maxFreq);
         for (int k = 0; k < usong->bar; k++) {
             tft->printf("%02d:{%4d,%3s,%3d}  ", k, usong->notes[k].pitch, usong->notes[k].noteName, usong->notes[k].noteLength);
             if (k % 2 == 1) tft->printf("\n");
