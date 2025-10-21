@@ -165,7 +165,7 @@ void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
     int minutes = songDuration/60000, seconds = (songDuration/1000)%60;
     if (printToDisplay) {
         tft->setCursor(0,0);
-        tft->printf("[%d] [%dm%02ds] %s\n\n", usong->numNotes, minutes, seconds, usong->name);
+        tft->printf("[%d] %s (%dm%02ds)\n\n", usong->numNotes, usong->name, minutes, seconds);
         tft->printf("T0=%dms bars=%dx%d lo=%dHz hi=%dHz [%02d-%02d]\n\n",
             usong->period, usong->numBars, usong->bar, minFreq, maxFreq, usong->minFreq, usong->maxFreq);
         for (int k = 0; k < usong->bar; k++) {
