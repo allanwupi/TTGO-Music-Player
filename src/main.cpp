@@ -29,6 +29,10 @@ const int BASS_BUZZER = 2;      // Output pin 2
 TFT_eSPI TFT = TFT_eSPI();
 TFT_eSPI *tft;
 
+// Probably shouldn't change these values
+#define LEDC_FREQUENCY 20000
+#define LEDC_RESOLUTION 16
+
 #define T_DISPLAY_COLS 320
 #define T_DISPLAY_ROWS 170
 #define DEFAULT_ORIENTATION 3
@@ -57,10 +61,8 @@ void setup()
     // Setup pins and LEDC channels for tone generation
     pinMode(TREBLE_BUZZER, OUTPUT);
     pinMode(BASS_BUZZER, OUTPUT);
-    pinMode(15, OUTPUT);
-    digitalWrite(15, HIGH);
-    ledcSetup(TREBLE, 20000, 16);
-    ledcSetup(BASS, 20000, 16);
+    ledcSetup(TREBLE, LEDC_FREQUENCY, LEDC_RESOLUTION);
+    ledcSetup(BASS, LEDC_FREQUENCY, LEDC_RESOLUTION);
     ledcAttachPin(TREBLE_BUZZER, TREBLE);
     ledcAttachPin(BASS_BUZZER, BASS);
     // Retrieve user preferences from memory
