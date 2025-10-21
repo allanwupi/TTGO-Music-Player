@@ -108,7 +108,7 @@ void loop()
 }
 
 void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
-    int prevUp = 1, prevDown = 1, currUp = 0, currDown = 0;
+    int prevUp = 0, prevDown = 0, currUp = 1, currDown = 1;
     int prevChoice = -1;
     int currChoice = defaultChoice;
     bool startPlayer = false;
@@ -126,7 +126,7 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
     while (!startPlayer) {
         currUp = !digitalRead(UP_BUTTON);
         currDown = !digitalRead(DOWN_BUTTON);
-        if (!prevUp && currUp) {
+        if (prevUp && !currUp) {
             if (currChoice == NUM_SONGS) {
                 int temp = SCREEN_LENGTH;
                 SCREEN_LENGTH = SCREEN_WIDTH;
@@ -139,7 +139,7 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
                 menuPrefs.putInt("header", HEADER_WIDTH);
             }
             startPlayer = true;
-        } else if (!prevDown && currDown) {
+        } else if (prevDown && !currDown) {
             currChoice = (currChoice+1) % (NUM_SONGS+1);
         }
         if (prevChoice != currChoice) {
@@ -204,11 +204,11 @@ void convertTrack(Track *usong, TFT_eSPI *tft, bool printToDisplay) {
             tft->printf("%02d:{%4d,%3s,%3d}  ", k, usong->notes[k].pitch, usong->notes[k].noteName, usong->notes[k].noteLength);
             if (HEADER_WIDTH > 20 || k % 2 == 1) tft->printf("\n");
         }
-        int prevUp = 1, prevDown = 1, currUp = 0, currDown = 0;
+        int prevUp = 0, prevDown = 0, currUp = 1, currDown = 1;
         while (true) {
             currUp = !digitalRead(UP_BUTTON);
             currDown = !digitalRead(DOWN_BUTTON);
-            if (!prevUp && currUp || !prevDown && currDown) break;
+            if (prevUp && !currUp || prevDown && !currDown) break;
             prevUp = currUp;
             prevDown = currDown;
             delay(100);
@@ -230,8 +230,8 @@ unsigned long playSingleTrack(Track song, TFT_eSPI *tft, int barsToDisplay, unsi
     tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
     tft->printf("%d:%02d  --/--  ---  ", prevElapsed/60000, (prevElapsed/1000)%60);
-    if (HEADER_WIDTH > 20) tft->printf("\n\n");
-    tft->printf(" %s", song.name);
+    if (HEADER_WIDTH > 20) tft->printf("\n\n %-27s", song.name);
+    else tft->printf("  %27s", song.name);
     tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
     int now = 0, next = 0, bars = 0, i = 0, j = 0;
     int stop = song.notes[song.numNotes-1].noteLength;
@@ -293,8 +293,8 @@ unsigned long playTracks(Track melody, Track bass, TFT_eSPI *tft, int barsToDisp
     tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
     tft->printf("%d:%02d  --/--  ---.---  ", prevElapsed/60000, (prevElapsed/1000)%60);
-    if (HEADER_WIDTH > 20) tft->printf("\n\n");
-    tft->printf(" %s", melody.name);
+    if (HEADER_WIDTH > 20) tft->printf("\n\n %-27s", melody.name);
+    else tft->printf("  %27s", melody.name);
     tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
     int now = 0, bars = 0, i = 0, j = 0;
     int stop = melody.notes[melody.numNotes-1].noteLength;
