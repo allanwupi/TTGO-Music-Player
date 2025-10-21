@@ -1,3 +1,6 @@
+// TTGO MUSIC PLAYER v3.3
+// By Allan Wu
+// Updated: 21 October 2025
 
 #include <Arduino.h>
 #include <TFT_eSPI.h>
@@ -6,7 +9,7 @@
 #include "pitches.h"
 
 const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v3.3";
-const char *AUTHOR_DETAILS = " by Allan Wu (21/20/2025)";
+const char *AUTHOR_DETAILS = " by Allan Wu (21/10/2025)";
 Preferences menuPrefs;
 
 int SCREEN_LENGTH = 320;
