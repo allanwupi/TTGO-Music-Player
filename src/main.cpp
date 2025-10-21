@@ -21,17 +21,11 @@ int DOWN_BUTTON;
 int screenOrientation;
 int chosenSong;
 
-const int TREBLE = 1;           // LEDC channel 1
-const int BASS = 2;             // LEDC channel 2
 const int TREBLE_BUZZER = 1;    // Output pin 1
 const int BASS_BUZZER = 2;      // Output pin 2
 
 TFT_eSPI TFT = TFT_eSPI();
 TFT_eSPI *tft;
-
-// Probably shouldn't change these values
-#define LEDC_FREQUENCY 20000
-#define LEDC_RESOLUTION 16
 
 #define T_DISPLAY_COLS 320
 #define T_DISPLAY_ROWS 170
@@ -54,7 +48,7 @@ TFT_eSPI *tft;
 void userSelectSong(int defaultChoice, TFT_eSPI *tft);
 void convertTrack(Track *usong, TFT_eSPI *tft, bool printToDisplay = false);
 unsigned long playSingleTrack(Track song, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long prevElapsed = 0);
-unsigned long playTracks(Track melody, Track bass, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long prevElapsed = 0);
+unsigned long playTracks(Track tracks[NUM_CHANNELS], TFT_eSPI *tft, int barsToDisplay = 1, unsigned long prevElapsed = 0);
 
 void setup()
 {
@@ -81,27 +75,31 @@ void setup()
     // Convert tracks to playable format and go to startup menu
     tft = &TFT;
     tft->init();
-    for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft); 
+    for (int i = 0; i < NUM_TRACKS; i++) convertTrack(Tracks[i], tft); 
     userSelectSong(chosenSong, tft);
 }
 
 void loop()
 {
+    static Track MEGALOVANIA[NUM_CHANNELS] = {Megalovania, MegalovaniaBass};
+    static Track LEGEND1[NUM_CHANNELS] = {TheLegend1, TheLegendBass1};
+    static Track LEGEND2[NUM_CHANNELS] = {TheLegend2, TheLegendBass2};
+    static Track LEGEND3[NUM_CHANNELS] = {TheLegend3, TheLegendBass3};
     unsigned long totalTime = 0;
     switch (chosenSong) {
         case (0):
-            playTracks(Megalovania, MegalovaniaBass, tft);
+            playTracks(MEGALOVANIA, tft);
             break;
         case (1):
-            totalTime = playTracks(TheLegend1, TheLegendBass1, tft, 2, 0);
-            totalTime = playTracks(TheLegend2, TheLegendBass2, tft, 2, totalTime);
-            totalTime = playTracks(TheLegend3, TheLegendBass3, tft, 2, totalTime);
+            totalTime = playTracks(LEGEND1, tft, 2, 0);
+            totalTime = playTracks(LEGEND2, tft, 2, totalTime);
+            totalTime = playTracks(LEGEND3, tft, 2, totalTime);
             break;
         case (2):
             playSingleTrack(FreedomMotif, tft, 4);
             break;
         case (5):
-            for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, true); // fall-through to refresh menu
+            for (int i = 0; i < NUM_TRACKS; i++) convertTrack(Tracks[i], tft, true); // fall-through to refresh menu
         default:
             userSelectSong(chosenSong, tft);
     }
@@ -164,10 +162,10 @@ void convertTrack(Track *usong, TFT_eSPI *tft, bool printToDisplay) {
     int minFreq = DS8;
     int maxFreq = NOTE_B0;
     int time = 0; // Convert note durations to absolute end time
-    for (int i = 0; i < usong->numNotes; i++) {
+    for (int i = 0; i < usong->size; i++) {
         if (!usong->converted) {
-            time += usong->notes[i].noteLength;
-            usong->notes[i].noteLength = time;
+            time += usong->notes[i].time;
+            usong->notes[i].time = time;
         }
         currFreq = usong->notes[i].pitch;
         if (currFreq && currFreq < minFreq) minFreq = currFreq;
@@ -187,21 +185,21 @@ void convertTrack(Track *usong, TFT_eSPI *tft, bool printToDisplay) {
     }
     usong->minFreq = minN;
     usong->maxFreq = maxN;
-    int songDuration = usong->period * usong->numBars * usong->bar;
+    int songDuration = usong->beat * usong->numBars * usong->bar;
     int minutes = songDuration/60000, seconds = (songDuration/1000)%60;
     if (printToDisplay) {
         tft->setCursor(0,0);
         if (HEADER_WIDTH > 20) {
-            tft->printf("%s\n[%d] (%dm%02ds)\n\n", usong->name, usong->numNotes, minutes, seconds);
+            tft->printf("%s\n[%d] (%dm%02ds)\n\n", usong->name, usong->size, minutes, seconds);
             tft->printf("T0=%dms bars=%dx%d\nlo=%dHz hi=%dHz [%02d-%02d]\n\n",
-                usong->period, usong->numBars, usong->bar, minFreq, maxFreq, usong->minFreq, usong->maxFreq);
+                usong->beat, usong->numBars, usong->bar, minFreq, maxFreq, usong->minFreq, usong->maxFreq);
         } else {
-            tft->printf("%s [%d] (%dm%02ds)\n\n", usong->name, usong->numNotes, minutes, seconds);
+            tft->printf("%s [%d] (%dm%02ds)\n\n", usong->name, usong->size, minutes, seconds);
             tft->printf("T0=%dms bars=%dx%d lo=%dHz hi=%dHz [%02d-%02d]\n\n",
-                usong->period, usong->numBars, usong->bar, minFreq, maxFreq, usong->minFreq, usong->maxFreq);
+                usong->beat, usong->numBars, usong->bar, minFreq, maxFreq, usong->minFreq, usong->maxFreq);
         }
         for (int k = 0; k < usong->bar; k++) {
-            tft->printf("%02d:{%4d,%3s,%3d}  ", k, usong->notes[k].pitch, usong->notes[k].noteName, usong->notes[k].noteLength);
+            tft->printf("%02d:{%4d,%3s,%3d}  ", k, usong->notes[k].pitch, usong->notes[k].name, usong->notes[k].time);
             if (HEADER_WIDTH > 20 || k % 2 == 1) tft->printf("\n");
         }
         int prevUp = 0, prevDown = 0, currUp = 1, currDown = 1;
@@ -221,12 +219,12 @@ unsigned long playSingleTrack(Track song, TFT_eSPI *tft, int barsToDisplay, unsi
     int freq1 = 0, freq2 = 0, n = 1;
     const int minN = song.minFreq;
     const int maxN = song.maxFreq;
-    const int T0 = song.period;
+    const int T0 = song.beat;
     const int divisions = song.bar * barsToDisplay;
     const int dx = ((SCREEN_LENGTH < T_DISPLAY_COLS) ? 160 : 320)/divisions;
     const int x0 = (HEADER_WIDTH > 20) ? 5 : 0;
     const int dy = (SCREEN_WIDTH-HEADER_WIDTH)/(maxN-minN);
-    const char *noteName = song.notes[0].noteName;
+    const char *noteName = song.notes[0].name;
     tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
     tft->printf("%d:%02d  --/--  ---  ", prevElapsed/60000, (prevElapsed/1000)%60);
@@ -234,7 +232,7 @@ unsigned long playSingleTrack(Track song, TFT_eSPI *tft, int barsToDisplay, unsi
     else tft->printf("  %27s", song.name);
     tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
     int now = 0, next = 0, bars = 0, i = 0, j = 0;
-    int stop = song.notes[song.numNotes-1].noteLength;
+    int stop = song.notes[song.size-1].time;
     bool movedBar = false, busy = false;
     int minutes = prevElapsed/60000, seconds = (prevElapsed/1000)%60, prevSeconds = -1;
     unsigned long prevTick = millis();
@@ -256,19 +254,19 @@ unsigned long playSingleTrack(Track song, TFT_eSPI *tft, int barsToDisplay, unsi
         }
         if (now == next && !busy) {
             busy = true;
-            int duration = (i > 0) ? (song.notes[i].noteLength - song.notes[i-1].noteLength) : song.notes[i].noteLength;
+            int duration = (i > 0) ? (song.notes[i].time - song.notes[i-1].time) : song.notes[i].time;
             freq1 = song.notes[i].pitch;
             if (freq1) {
                 ledcWriteTone(TREBLE, freq1);
                 for (n = minN ; n <= maxN ; n++) if (freq1 == TONE_INDEX[n]) break;
                 tft->drawFastHLine(x0+(now%divisions)*dx, max(HEADER_WIDTH+2, SCREEN_WIDTH-1-dy*(n-minN)), dx*duration-1, HI_COLOUR);
-                noteName = song.notes[i].noteName;
+                noteName = song.notes[i].name;
                 tft->setCursor(HEADER_DATUM,HEADER_DATUM);
                 tft->printf("%d:%02d  %2d/%-2d  %-3s", minutes, seconds, bars, song.numBars, noteName);
             } else {
                 ledcWriteTone(TREBLE, 0);
             }
-            next = song.notes[i++].noteLength;
+            next = song.notes[i++].time;
         }
         if (millis() - prevTick >= T0) {
             movedBar = false, busy = false;
@@ -279,32 +277,33 @@ unsigned long playSingleTrack(Track song, TFT_eSPI *tft, int barsToDisplay, unsi
     return millis() - startTime + prevElapsed;
 }
 
-unsigned long playTracks(Track melody, Track bass, TFT_eSPI *tft, int barsToDisplay, unsigned long prevElapsed) {
-    int freq1 = 0, freq2 = 0, n = 1;
-    const int minN = bass.minFreq;
-    const int maxN = melody.maxFreq;
-    const int T0 = melody.period;
-    const int divisions = melody.bar * barsToDisplay;
+unsigned long playTracks(Track tracks[NUM_CHANNELS], TFT_eSPI *tft, int barsToDisplay, unsigned long prevElapsed) {
+    const int channels[NUM_CHANNELS] = {TREBLE, BASS};
+    const int hi = tracks[0].maxFreq;
+    const int lo = tracks[1].minFreq;
+    const int T0 = tracks[0].beat;
+    const int bar = tracks[0].bar;
+    const int divisions = bar * barsToDisplay;
     const int dx = ((SCREEN_LENGTH < T_DISPLAY_COLS) ? 160 : 320)/divisions;
     const int x0 = (HEADER_WIDTH > 20) ? 5 : 0;
-    const int dy = (SCREEN_WIDTH-HEADER_WIDTH)/(maxN - minN);
-    const char *trebleNoteName = melody.notes[0].noteName;
-    const char *bassNoteName = bass.notes[0].noteName;
+    const int dy = (SCREEN_WIDTH-HEADER_WIDTH)/(hi - lo);
+    const char *melodyNote = tracks[0].notes[0].name;
+    const char *bassNote = tracks[1].notes[0].name;
+
     tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
     tft->printf("%d:%02d  --/--  ---.---  ", prevElapsed/60000, (prevElapsed/1000)%60);
-    if (HEADER_WIDTH > 20) tft->printf("\n\n %-27s", melody.name);
-    else tft->printf("  %27s", melody.name);
+    if (HEADER_WIDTH > 20) tft->printf("\n\n %-27s", tracks[0].name);
+    else tft->printf("  %27s", tracks[0].name);
     tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
-    int now = 0, bars = 0, i = 0, j = 0;
-    int stop = melody.notes[melody.numNotes-1].noteLength;
-    if (stop != bass.notes[bass.numNotes-1].noteLength) {
-        Serial.printf("Error: melody and bass tracks have differing lengths\n");
-        Serial.printf("Melody: %d, bass: %d\n", stop, bass.notes[bass.numNotes-1].noteLength);
-        return 0;
-    }
-    int nextTreble = 0, nextBass = 0;
-    bool movedBar = false, trebleBusy = false, bassBusy = false;
+
+    bool movedBar = false;
+    bool busy[NUM_CHANNELS] = {0, 0};
+    int freq[NUM_CHANNELS] = {0, 0};
+    int ptrs[NUM_CHANNELS] = {0, 0};
+    int next[NUM_CHANNELS] = {0, 0};
+    int now = 0, bars = 0, n = 1;
+    const int stop = tracks[0].notes[tracks[0].size-1].time;
     int minutes = prevElapsed/60000, seconds = (prevElapsed/1000)%60, prevSeconds = -1;
     unsigned long prevTick = millis();
     unsigned long startTime = millis();
@@ -316,47 +315,37 @@ unsigned long playTracks(Track melody, Track bass, TFT_eSPI *tft, int barsToDisp
             tft->printf("%d:%02d", minutes, seconds);
             prevSeconds = seconds;
         }
-        if (now % melody.bar == 0 && !movedBar) {
+        if (now % bar == 0 && !movedBar) {
             if (now % divisions == 0) tft->fillRect(0, HEADER_WIDTH+1, SCREEN_LENGTH, SCREEN_WIDTH-HEADER_WIDTH-1, BG_COLOUR); 
             bars++;
             tft->setCursor(HEADER_DATUM,HEADER_DATUM);
-            tft->printf("%d:%02d  %2d/%-2d", minutes, seconds, bars, melody.numBars);
+            tft->printf("%d:%02d  %2d/%-2d", minutes, seconds, bars, tracks[0].numBars);
             movedBar = true;
         }
-        if (nextTreble == now && !trebleBusy) {
-            trebleBusy = true;
-            int duration = (i > 0) ? (melody.notes[i].noteLength - melody.notes[i-1].noteLength) : melody.notes[i].noteLength;
-            freq1 = melody.notes[i].pitch;
-            if (freq1 > 0) {
-                ledcWriteTone(TREBLE, freq1);
-                for (n = minN ; n <= maxN ; n++) if (freq1 == TONE_INDEX[n]) break;
-                tft->drawFastHLine(x0+(now%divisions)*dx, max(HEADER_WIDTH+2, SCREEN_WIDTH-1-dy*(n-minN)), dx*duration-1, HI_COLOUR);
-                trebleNoteName = melody.notes[i].noteName;
-                tft->setCursor(HEADER_DATUM,HEADER_DATUM);
-                tft->printf("%d:%02d  %2d/%-2d  %-3s.%-3s", minutes, seconds, bars, melody.numBars, trebleNoteName, bassNoteName);
-            } else {
-                ledcWriteTone(TREBLE, 0);
+        for (int k = 0; k < NUM_CHANNELS; k++) {
+            if (next[k] == now && !busy[k]) {
+                int i = ptrs[k];
+                busy[k] = true;
+                int delta = (i > 0) ? (tracks[k].notes[i].time - tracks[k].notes[i-1].time) : tracks[k].notes[i].time;
+                freq[k] = tracks[k].notes[i].pitch;
+                if (freq[k] > 0) {
+                    ledcWriteTone(TREBLE, freq[k]);
+                    for (n = lo ; n <= hi ; n++) if (freq[k] == TONE_INDEX[n]) break;
+                    tft->drawFastHLine(x0+(now%divisions)*dx, max(HEADER_WIDTH+2, SCREEN_WIDTH-1-dy*(n-lo)), dx*delta-1, HI_COLOUR);
+                    if (k == 0) melodyNote = tracks[k].notes[i].name;
+                    else if (k == 1) bassNote = tracks[k].notes[i].name;
+                    tft->setCursor(HEADER_DATUM,HEADER_DATUM);
+                    tft->printf("%d:%02d  %2d/%-2d  %-3s.%-3s", minutes, seconds, bars, tracks[k].numBars, melodyNote, bassNote);
+                } else {
+                    ledcWriteTone(TREBLE, 0);
+                }
+                next[k] = tracks[k].notes[i].time;
+                ptrs[k]++;
             }
-            nextTreble = melody.notes[i++].noteLength;
-        }
-        if (nextBass == now && !bassBusy) {
-            bassBusy = true;
-            int duration = (j > 0) ? (bass.notes[j].noteLength - bass.notes[j-1].noteLength) : bass.notes[j].noteLength;
-            freq2 = bass.notes[j].pitch;
-            if (freq2 > 0) {
-                ledcWriteTone(BASS, freq2);
-                for (n = minN ; n <= maxN ; n++) if (freq2 == TONE_INDEX[n]) break;
-                tft->drawFastHLine(x0+(now%divisions)*dx, max(HEADER_WIDTH+2, SCREEN_WIDTH-1-dy*(n-minN)), dx*duration-1, LO_COLOUR);
-                bassNoteName = bass.notes[j].noteName;
-                tft->setCursor(HEADER_DATUM,HEADER_DATUM);
-                tft->printf("%d:%02d  %2d/%-2d  %-3s.%-3s", minutes, seconds, bars, melody.numBars, trebleNoteName, bassNoteName);
-            } else {
-                ledcWriteTone(BASS, 0);
-            }
-            nextBass = bass.notes[j++].noteLength;
         }
         if (millis() - prevTick >= T0) {
-            movedBar = false, trebleBusy = false, bassBusy = false;
+            movedBar = false;
+            for (int k = 0; k < NUM_CHANNELS; k++) busy[k] = 0;
             now++;
             prevTick = millis();
         }
