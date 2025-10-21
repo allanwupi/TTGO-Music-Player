@@ -229,7 +229,7 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
                 if (freq1) {
                     ledcWriteTone(TREBLE, freq1);
                     for (n = minN ; n <= maxN ; n++) if (freq1 == TONE_INDEX[n]) break;
-                    tft->drawFastHLine((now%divisions)*dx, max(22, 169-dy*(n-minN)), dx*duration-2, HIGH_EMPHASIS_COLOUR);
+                    tft->drawFastHLine((now%divisions)*dx, max(22, 169-dy*(n-minN)), dx*duration-2, song.colour);
                     noteName = song.notes[i].noteName;
                     tft->setCursor(7,7);
                     tft->printf("%d:%02d  %2d/%-2d  %-3s", minutes, seconds, bars, song.numBars, noteName);
@@ -299,7 +299,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
                 if (freq1) {
                     ledcWriteTone(TREBLE, freq1);
                     for (n = minN ; n <= maxN ; n++) if (freq1 == TONE_INDEX[n]) break;
-                    tft->drawFastHLine((now%divisions)*dx, max(22, 169-dy*(n-minN)), dx*duration-2, HIGH_EMPHASIS_COLOUR);
+                    tft->drawFastHLine((now%divisions)*dx, max(22, 169-dy*(n-minN)), dx*duration-2, song.colour);
                     trebleNoteName = song.notes[i].noteName;
                     tft->setCursor(7,7);
                     tft->printf("%d:%02d  %2d/%-2d  %-3s.%-3s", minutes, seconds, bars, song.numBars, trebleNoteName, bassNoteName);
@@ -321,7 +321,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
                 if (freq2) {
                     ledcWriteTone(BASS, freq2);
                     for (n = minN ; n <= maxN ; n++) if (freq2 == TONE_INDEX[n]) break;
-                    tft->drawFastHLine((now%divisions)*dx, 169-dy*(n-minN), dx*duration-2, TFT_DARKGREY);
+                    tft->drawFastHLine((now%divisions)*dx, 169-dy*(n-minN), dx*duration-2, bass.colour);
                     bassNoteName = bass.notes[j].noteName;
                     tft->setCursor(7,7);
                     tft->printf("%d:%02d  %2d/%-2d  %-3s.%-3s", minutes, seconds, bars, song.numBars, trebleNoteName, bassNoteName);

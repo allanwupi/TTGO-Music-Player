@@ -21,6 +21,7 @@ typedef struct {
     int period; // Millisecond duration of shortest note
     int bar; // Number of shortest note durations in 1 bar
     int numBars; // Length of the song in bars
+    int colour; // RGB 565 (16-bit colour)
     int minFreq; // Used for scaling TFT, converts to index into TONE_INDEX
     int maxFreq; // Used for scaling TFT, converts to index into TONE_INDEX
     bool converted; // Notes must be converted before playing

@@ -1,7 +1,8 @@
 #ifndef PITCHES_H
 #define PITCHES_H
 
-#define NUM_FREQS 90 // Range from B0 to DS8
+// Range from B0 to DS8
+#define NUM_FREQS 90
 
 #define REST 0
 #define NOTE_B0  31
@@ -14,7 +15,7 @@
 #define FS1 46
 #define G1  49
 #define GS1 52
-#define A1  55
+#define NOTE_A1  55
 #define AS1 58
 #define NOTE_B1  62
 #define C2  65
@@ -26,7 +27,7 @@
 #define FS2 93
 #define G2  98
 #define GS2 104
-#define A2  110
+#define NOTE_A2  110
 #define AS2 117
 #define B2  123
 #define C3  131
