@@ -9,8 +9,8 @@ extern const char *SONG_DESCRIPTIONS[NUM_SONGS+1];
 
 typedef struct {
     unsigned int pitch; // 0 for NO PITCH
-    const char *noteName;
-    unsigned int noteLength;
+    const char *noteName; // 2-3 characters
+    unsigned int noteLength; // TODO: implement special behaviour for 0
 } Note;
 
 typedef struct {
