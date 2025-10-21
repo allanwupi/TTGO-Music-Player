@@ -45,12 +45,6 @@ void setup()
     pinMode(BASS_BUZZER, OUTPUT);
     pinMode(15, OUTPUT);
     digitalWrite(15, HIGH);
-    tft = &TFT;
-    tft->init();
-    tft->setTextColor(PRIMARY_TEXT_COLOUR, BACKGROUND_COLOUR);
-    tft->setTextFont(0);
-    tft->setRotation(screenOrientation);
-    tft->fillScreen(BACKGROUND_COLOUR);
     ledcSetup(TREBLE, 20000, 16);
     ledcSetup(BASS, 20000, 16);
     ledcAttachPin(TREBLE_BUZZER, TREBLE);
@@ -61,6 +55,13 @@ void setup()
     else screenOrientation = menuPrefs.getInt("orientation");
     if (!menuPrefs.isKey("selection"))  menuPrefs.putInt("selection", DEFAULT_SELECTION);
     else chosenSong = menuPrefs.getInt("selection");
+    
+    tft = &TFT;
+    tft->init();
+    tft->setTextColor(PRIMARY_TEXT_COLOUR, BACKGROUND_COLOUR);
+    tft->setTextFont(0);
+    tft->setRotation(screenOrientation);
+    tft->fillScreen(BACKGROUND_COLOUR);
 
     for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft); 
     userSelectSong(chosenSong, tft);
@@ -196,7 +197,7 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
     const int dy = 150/(maxN - minN);
     const char *noteName = song.notes[0].noteName;
     tft->setCursor(7,7);
-    tft->printf("%d:%02d  00/00  ---  %s", elapsed/60000, (elapsed/1000)%60, song.name);
+    tft->printf("%d:%02d  --/--  ---  %s", elapsed/60000, (elapsed/1000)%60, song.name);
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
     int now = 0, next = 0, bars = 0, i = 0, j = 0;
     bool finalNote = false;
@@ -265,7 +266,7 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
     const char *trebleNoteName = song.notes[0].noteName;
     const char *bassNoteName = bass.notes[0].noteName;
     tft->setCursor(7,7);
-    tft->printf("%d:%02d  00/00  ---.---  %s", elapsed/60000, (elapsed/1000)%60, song.name);
+    tft->printf("%d:%02d  --/--  ---.---  %s", elapsed/60000, (elapsed/1000)%60, song.name);
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
     int now = 0, bars = 0, i = 0, j = 0;
     int nextTreble = 0, nextBass = 0;
