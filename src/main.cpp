@@ -101,7 +101,7 @@ void loop()
 }
 
 void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
-    int prevUp = 0, prevDown = 0, currUp = 0, currDown = 0;
+    int prevUp = 1, prevDown = 1, currUp = 0, currDown = 0;
     int prevChoice = -1;
     int currChoice = defaultChoice;
     bool startPlayer = false;
@@ -119,7 +119,7 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
     while (!startPlayer) {
         currUp = !digitalRead(UP_BUTTON);
         currDown = !digitalRead(DOWN_BUTTON);
-        if (prevUp && !currUp) {
+        if (!prevUp && currUp) {
             if (currChoice == NUM_SONGS) {
                 int temp = SCREEN_LENGTH;
                 SCREEN_LENGTH = SCREEN_WIDTH;
@@ -132,7 +132,7 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
                 menuPrefs.putInt("header", HEADER_WIDTH);
             }
             startPlayer = true;
-        } else if (prevDown && !currDown) {
+        } else if (!prevDown && currDown) {
             currChoice = (currChoice+1) % (NUM_SONGS+1);
         }
         if (prevChoice != currChoice) {
@@ -140,8 +140,8 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
             for (int i = 0; i < NUM_SONGS+1; i++) tft->drawString(SONG_DESCRIPTIONS[i], MENU_X_DATUM, HEADER_WIDTH+10+MENU_SPACING*i);
             tft->setTextColor(SELECTED_COLOUR, BG_COLOUR);
             tft->drawString(SONG_DESCRIPTIONS[currChoice], MENU_X_DATUM, HEADER_WIDTH+10+MENU_SPACING*currChoice);
+            tft->setTextColor(TITLE_COLOUR, BG_COLOUR);
         }
-        tft->setTextColor(TITLE_COLOUR, BG_COLOUR);
         prevChoice = currChoice;
         prevUp = currUp;
         prevDown = currDown;
@@ -197,11 +197,11 @@ void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
             tft->printf("%02d:{%4d,%3s,%3d}  ", k, usong->notes[k].pitch, usong->notes[k].noteName, usong->notes[k].noteLength);
             if (HEADER_WIDTH > 20 || k % 2 == 1) tft->printf("\n");
         }
-        int prevUp = 0, prevDown = 0, currUp = 0, currDown = 0;
+        int prevUp = 1, prevDown = 1, currUp = 0, currDown = 0;
         while (true) {
             currUp = !digitalRead(UP_BUTTON);
             currDown = !digitalRead(DOWN_BUTTON);
-            if (prevUp && !currUp || prevDown && !currDown) break;
+            if (!prevUp && currUp || !prevDown && currDown) break;
             prevUp = currUp;
             prevDown = currDown;
             delay(100);
