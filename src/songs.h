@@ -25,16 +25,8 @@ typedef struct {
     bool converted; // Notes must be converted before playing
 } Song_t;
 
-extern Note megalovania[];
-extern Note legend1[];
-extern Note legendBass1[];
-extern Note legend2[];
-extern Note legendBass2[];
-extern Note legend3[];
-extern Note legendBass3[];
-extern Note freedomMotif[];
-
 extern Song_t Megalovania;
+extern Song_t MegalovaniaBass;
 extern Song_t TheLegend1;
 extern Song_t TheLegendBass1;
 extern Song_t TheLegend2;
@@ -43,7 +35,6 @@ extern Song_t TheLegend3;
 extern Song_t TheLegendBass3;
 extern Song_t FreedomMotif;
 
-extern Song_t MegalovaniaBass;
 extern Song_t *SongPtrs[NUM_TRACKS];
 
 #endif

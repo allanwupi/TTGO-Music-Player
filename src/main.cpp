@@ -18,11 +18,11 @@ Preferences menuPrefs;
 #define MENU_SPACING    14
 
 #define TITLE_COLOUR        TFT_WHITE       // Program name
-#define SELECTED_COLOUR     TFT_WHITE       // Selected option
+#define SELECTED_COLOUR     TFT_WHITE      	// Selected option
 #define DESELECTED_COLOUR   0x2965          // Greyed-out option
-#define DESC_COLOUR         TFT_BLUE       	// Top description
-#define HI_COLOUR           TFT_BLUE        // Treble track
-#define LO_COLOUR           TFT_NAVY	    // Bass track
+#define DESC_COLOUR         TFT_WHITE       // Top description
+#define HI_COLOUR           TFT_CYAN        // Treble track
+#define LO_COLOUR           TFT_DARKCYAN    // Bass track
 #define BG_COLOUR           TFT_BLACK       // Background
 
 TFT_eSPI TFT = TFT_eSPI();
