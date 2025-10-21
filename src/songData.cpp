@@ -6,7 +6,7 @@ const char *SONG_DESCRIPTIONS[NUM_SONGS+1] = {
     "2. THE LEGEND (1:49)",
     "3. FREEDOM MOTIF (0:12) ",
     "4. ------ ",
-    "5. ------ ",
+    "5. Print Song Stats ",
     "6. Rotate Screen",
 };
 
@@ -365,13 +365,13 @@ Note freedomMotif[] = {
 };
 
 Song_t Megalovania = {"MEGALOVANIA - Toby Fox", megalovania, 766, 63, 32, 78, D3, A6};
-Song_t MegalovaniaBass = {"MEGALOVANIA", megalovaniaBass, 978, 63, 32, 78, AS2, D4};
+Song_t MegalovaniaBass = {"MEGALOVANIA (Bass Line)", megalovaniaBass, 978, 63, 32, 78, AS2, D4};
 Song_t TheLegend1 = {"THE LEGEND - Toby Fox (1/3)", legend1, 33, 272, 8, 9, G3, E6};
-Song_t TheLegendBass1 = {"THE LEGEND - Toby Fox (1/3)", legendBass1, 20, 272, 8, 9, G3, E6};
+Song_t TheLegendBass1 = {"THE LEGEND (Bass Line) (1/3)", legendBass1, 20, 272, 8, 9, G3, E6};
 Song_t TheLegend2 = {"THE LEGEND - Toby Fox (2/3)", legend2, 134, 136, 16, 33, G3, E6};
-Song_t TheLegendBass2 = {"THE LEGEND - Toby Fox (2/3)", legendBass2, 157, 136, 16, 33, C2, E6};
+Song_t TheLegendBass2 = {"THE LEGEND (Bass Line) (2/3)", legendBass2, 157, 136, 16, 33, C2, E6};
 Song_t TheLegend3 = {"THE LEGEND - Toby Fox (3/3)", legend3, 49, 46, 24, 18, G3, E6};
-Song_t TheLegendBass3 = {"THE LEGEND - Toby Fox (3/3)", legendBass3, 55, 46, 24, 18, F3, E6};
+Song_t TheLegendBass3 = {"THE LEGEND (Bass Line) (3/3)", legendBass3, 55, 46, 24, 18, F3, E6};
 Song_t FreedomMotif = {"FREEDOM MOTIF", freedomMotif, 31, 100, 16, 8, E4, C6};
 
 Song_t *SongPtrs[NUM_TRACKS] = {

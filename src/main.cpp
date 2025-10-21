@@ -31,12 +31,13 @@ int chosenSong = 0;
 
 void userSelectSong(TFT_eSPI *tft);
 void convertToAbsoluteTime(Song_t song);
+void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay = false);
 unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
 unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
 
 void setup()
 {
-    //Serial.begin(115200);
+    Serial.begin(115200);
     pinMode(TREBLE_BUZZER, OUTPUT);
     pinMode(BASS_BUZZER, OUTPUT);
     pinMode(15, OUTPUT);
@@ -45,21 +46,19 @@ void setup()
     tft->init();
     tft->setTextColor(PRIMARY_TEXT_COLOUR, BACKGROUND_COLOUR);
     tft->setTextFont(0);
-    tft->setTextSize(2);
     tft->setRotation(screenOrientation);
     tft->fillScreen(BACKGROUND_COLOUR);
     ledcSetup(TREBLE, 20000, 16);
     ledcSetup(BASS, 20000, 16);
     ledcAttachPin(TREBLE_BUZZER, TREBLE);
     ledcAttachPin(BASS_BUZZER, BASS);
+    for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, true); 
     userSelectSong(tft);
-    for (int i = 0; i < NUM_TRACKS; i++) convertToAbsoluteTime(*SongPtrs[i]);
 }
 
 void loop()
 {
     unsigned long runTime = 0;
-    tft->setTextSize(1);
     switch (chosenSong) {
         case (0):
             playTracks(Megalovania, MegalovaniaBass, tft);
@@ -71,9 +70,11 @@ void loop()
             break;
         case (2):
             playSingleTrack(FreedomMotif, tft, 4);
-           break;
+            break;
+        case (4):
+            for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, false); 
+            break;
         default:
-            tft->setTextSize(2);
             userSelectSong(tft);
     }
 }
@@ -84,7 +85,7 @@ void userSelectSong(TFT_eSPI *tft) {
     int prevChoice = -1;
     static int currChoice = 0;
     bool startPlayer = false;
-
+    tft->setTextSize(2);
     tft->setCursor(0, 0);
     tft->printf(PROGRAM_NAME);
     tft->drawFastHLine(0, 20, 320, TFT_WHITE);
@@ -124,27 +125,63 @@ void userSelectSong(TFT_eSPI *tft) {
         prevDown = currDown;
     }
     tft->fillScreen(BACKGROUND_COLOUR);
+    tft->setTextSize(1);
     chosenSong = currChoice;
 }
 
-void convertToAbsoluteTime(Song_t song) {
-    int Time = 0; // Absolute time steps
-    for (int i = 0; i < song.numNotes; i++) {
-        Time += song.notes[i].noteLength;
-        song.notes[i].noteLength = Time;
-    }
-}
 
-unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsed) {
-    int freq1 = 0, freq2 = 0;
+void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
+    int time = 0; // Convert to absolute time steps
+    int minFreq = DS8;
+    int maxFreq = NOTE_B0;
+    int currFreq;
+    for (int i = 0; i < usong->numNotes; i++) {
+        time += usong->notes[i].noteLength;
+        usong->notes[i].noteLength = time;
+        currFreq = usong->notes[i].pitch;
+        if (currFreq && currFreq < minFreq) minFreq = currFreq;
+        if (currFreq && currFreq > maxFreq) maxFreq = currFreq;
+    }
+    int numBars = time / usong->bar;
     int n, minN, maxN;
-    for (n = 1 ; n <= NUM_FREQS ; n++) {
-        if (song.minFreq == TONE_INDEX[n]) minN = n;
-        if (song.maxFreq == TONE_INDEX[n]) {
+    for (n = 1; n <= NUM_FREQS; n++) {
+        if (TONE_INDEX[n] == minFreq) minN = n;
+        if (TONE_INDEX[n] == maxFreq) {
             maxN = n;
             break;
         }
     }
+    usong->numBars = numBars;
+    usong->minFreq = minN;
+    usong->maxFreq = maxN;
+
+    if (printToDisplay) {
+        tft->setCursor(0,0);
+        tft->printf("%s\n", usong->name);
+        tft->printf("[%d] T0=%d bars=%dx%d min=%-4d[%02d].max=%-4d[%02d]\n\n",
+            usong->numNotes, usong->period, usong->numBars, usong->bar, minFreq, usong->minFreq, maxFreq, usong->maxFreq);
+        for (int k = 0; k < usong->bar; k++) {
+            tft->printf("%02d:{%4d,%3s,%3d}  ", k, usong->notes[k].pitch, usong->notes[k].noteName, usong->notes[k].noteLength);
+            if (k % 2 == 1) tft->printf("\n");
+        }
+        int prevUp = 0, prevDown = 0;
+        int currUp = 0, currDown = 0;
+        while (true) {
+            currUp = !digitalRead(UP_BUTTON);
+            currDown = !digitalRead(DOWN_BUTTON);
+            if (prevUp && !currUp || prevDown && !currDown) break;
+            prevUp = currUp;
+            prevDown = currDown;
+            delay(100);
+        }
+        tft->fillScreen(TFT_BLACK);
+    }
+}
+
+unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsed) {
+    int n, freq1 = 0, freq2 = 0;
+    const int minN = song.minFreq;
+    const int maxN = song.maxFreq;
     const int T0 = song.period;
     const int divisions = song.bar * barsToDisplay;
     const int dx = 320/divisions;
@@ -210,14 +247,9 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
 
 unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsed) {
     int freq1 = 0, freq2 = 0;
-    int n, minN, maxN;
-    for (n = 1 ; n <= NUM_FREQS ; n++) {
-        if (bass.minFreq == TONE_INDEX[n]) minN = n;
-        if (song.maxFreq == TONE_INDEX[n]) {
-            maxN = n;
-            break;
-        }
-    }
+    int n = 1;
+    const int minN = bass.minFreq;
+    const int maxN = song.maxFreq;
     const int T0 = song.period;
     const int divisions = song.bar * barsToDisplay;
     const int dx = 320/divisions;

@@ -21,8 +21,8 @@ typedef struct {
     int period; // Millisecond duration of shortest note
     int bar; // Number of shortest note durations in 1 bar
     int numBars; // Length of the song in bars
-    int minFreq; // Only used for scaling TFT
-    int maxFreq; // Only used for scaling TFT
+    int minFreq; // Used for scaling TFT, converts to index into TONE_INDEX
+    int maxFreq; // Used for scaling TFT, converts to index into TONE_INDEX
 } Song_t;
 
 extern Note megalovania[];
