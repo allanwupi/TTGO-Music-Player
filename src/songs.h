@@ -23,18 +23,18 @@ typedef struct {
     int minFreq; // Used for scaling TFT, converts to index into TONE_INDEX
     int maxFreq; // Used for scaling TFT, converts to index into TONE_INDEX
     bool converted; // Notes must be converted before playing
-} Song_t;
+} Track;
 
-extern Song_t Megalovania;
-extern Song_t MegalovaniaBass;
-extern Song_t TheLegend1;
-extern Song_t TheLegendBass1;
-extern Song_t TheLegend2;
-extern Song_t TheLegendBass2;
-extern Song_t TheLegend3;
-extern Song_t TheLegendBass3;
-extern Song_t FreedomMotif;
+extern Track Megalovania;
+extern Track MegalovaniaBass;
+extern Track TheLegend1;
+extern Track TheLegendBass1;
+extern Track TheLegend2;
+extern Track TheLegendBass2;
+extern Track TheLegend3;
+extern Track TheLegendBass3;
+extern Track FreedomMotif;
 
-extern Song_t *SongPtrs[NUM_TRACKS];
+extern Track *SongPtrs[NUM_TRACKS];
 
 #endif
