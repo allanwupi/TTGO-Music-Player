@@ -98,18 +98,12 @@ void loop()
 }
 
 void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
-    int prevUp = 0, prevDown = 0;
-    int currUp = 0, currDown = 0;
+    int prevUp = 0, prevDown = 0, currUp = 0, currDown = 0;
     int prevChoice = -1;
     int currChoice = defaultChoice;
     bool startPlayer = false;
-    if (screenOrientation == 0 || screenOrientation == 3) { // orientation 0,3
-        UP_BUTTON = 0;
-        DOWN_BUTTON = 14;
-    } else { // orientation 1,2
-        UP_BUTTON = 14;
-        DOWN_BUTTON = 0;
-    }
+    UP_BUTTON = 14 * !(screenOrientation == 0 || screenOrientation == 3); // 0 if orientation 3
+    DOWN_BUTTON = 14 * (screenOrientation == 0 || screenOrientation == 3); // 14 if orientation 3
     tft->setRotation(screenOrientation);
     tft->fillScreen(BG_COLOUR);
     tft->setTextColor(TITLE_COLOUR, BG_COLOUR);
@@ -200,8 +194,7 @@ void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
             tft->printf("%02d:{%4d,%3s,%3d}  ", k, usong->notes[k].pitch, usong->notes[k].noteName, usong->notes[k].noteLength);
             if (HEADER_WIDTH > 20 || k % 2 == 1) tft->printf("\n");
         }
-        int prevUp = 0, prevDown = 0;
-        int currUp = 0, currDown = 0;
+        int prevUp = 0, prevDown = 0, currUp = 0, currDown = 0;
         while (true) {
             currUp = !digitalRead(UP_BUTTON);
             currDown = !digitalRead(DOWN_BUTTON);
