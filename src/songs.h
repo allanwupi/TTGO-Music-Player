@@ -14,7 +14,7 @@ typedef struct {
 } Note;
 
 typedef struct {
-    const char *name; // Song name (30 characters maximum)
+    const char *name; // Song name (27 characters maximum)
     Note *notes; // Array of notes {freqIndex, noteLength}
     int numNotes; // Size of note array
     int period; // Millisecond duration of shortest note
