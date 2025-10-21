@@ -30,7 +30,6 @@ int screenOrientation = 3;
 int chosenSong = 0;
 
 void userSelectSong(TFT_eSPI *tft);
-void convertToAbsoluteTime(Song_t song);
 void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay = false);
 unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
 unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
