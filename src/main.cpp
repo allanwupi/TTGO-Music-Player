@@ -4,7 +4,7 @@
 #include "songs.h"
 #include "pitches.h"
 
-const char *PROGRAM_NAME = " TTGO MUSIC PLAYER v3.0 ";
+const char *PROGRAM_NAME = " TTGO MUSIC PLAYER v3.1 ";
 
 #define TREBLE 1
 #define BASS 2
@@ -107,21 +107,14 @@ void userSelectSong(TFT_eSPI *tft) {
         } else if (prevDown && !currDown) {
             currChoice = (currChoice + 1) % (NUM_SONGS+1);
         }
-
         if (prevChoice != currChoice) {
             tft->setTextColor(LOW_EMPHASIS_COLOUR, BACKGROUND_COLOUR);
-
-            for (int i = 0; i < NUM_SONGS+1; i++) {
-            tft->drawString(SONG_DESCRIPTIONS[i], MENU_X_DATUM, MENU_Y_DATUM+23*i);
-            }
-
+            for (int i = 0; i < NUM_SONGS+1; i++) tft->drawString(SONG_DESCRIPTIONS[i], MENU_X_DATUM, MENU_Y_DATUM+23*i);
             tft->setTextColor(HIGH_EMPHASIS_COLOUR, BACKGROUND_COLOUR);
             tft->drawString(SONG_DESCRIPTIONS[currChoice], MENU_X_DATUM, MENU_Y_DATUM+23*currChoice);
         }
-
         tft->setTextColor(PRIMARY_TEXT_COLOUR, BACKGROUND_COLOUR);
         prevChoice = currChoice;
-
         prevUp = currUp;
         prevDown = currDown;
     }
