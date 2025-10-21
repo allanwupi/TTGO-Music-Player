@@ -198,7 +198,7 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
     const char *noteName = song.notes[0].noteName;
     tft->setCursor(7,7);
     tft->printf("%d:%02d  --/--  ---  %s", elapsed/60000, (elapsed/1000)%60, song.name);
-    tft->drawFastHLine(0, 20, 320, song.colour);
+    tft->drawFastHLine(0, 20, 320, TFT_WHITE);
     int now = 0, next = 0, bars = 0, i = 0, j = 0;
     bool finalNote = false;
     bool finished = false;

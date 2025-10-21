@@ -373,7 +373,7 @@ Song_t TheLegend2 = {"THE LEGEND - Toby Fox (2/3)", legend2, 134, 136, 16, 33, T
 Song_t TheLegendBass2 = {"THE LEGEND (Bass Line) (2/3)", legendBass2, 157, 136, 16, 33, 0xD817, C2, E6, false};
 Song_t TheLegend3 = {"THE LEGEND - Toby Fox (3/3)", legend3, 49, 46, 24, 18, TFT_CYAN, G3, E6, false};
 Song_t TheLegendBass3 = {"THE LEGEND (Bass Line) (3/3)", legendBass3, 55, 46, 24, 18, 0xD817, F3, E6, false};
-Song_t FreedomMotif = {"FREEDOM MOTIF", freedomMotif, 31, 100, 16, 8, 0x7FE3, E4, C6, false};
+Song_t FreedomMotif = {"FREEDOM MOTIF", freedomMotif, 31, 100, 16, 8, TFT_GOLD, E4, C6, false};
 
 Song_t *SongPtrs[NUM_TRACKS] = {
     &Megalovania, &MegalovaniaBass, 
