@@ -1,10 +1,12 @@
 
 #include <Arduino.h>
 #include <TFT_eSPI.h>
+#include <Preferences.h>
 #include "songs.h"
 #include "pitches.h"
 
 const char *PROGRAM_NAME = " TTGO MUSIC PLAYER v3.1 ";
+Preferences menuPrefs; 
 
 #define TREBLE 1
 #define BASS 2
@@ -28,8 +30,10 @@ int DOWN_BUTTON = 14;
 
 int screenOrientation = 3;
 int chosenSong = 0;
+#define DEFAULT_ORIENTATION 3
+#define DEFAULT_SELECTION 0
 
-void userSelectSong(TFT_eSPI *tft);
+void userSelectSong(int defaultChoice, TFT_eSPI *tft);
 void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay = false);
 unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
 unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
@@ -51,8 +55,15 @@ void setup()
     ledcSetup(BASS, 20000, 16);
     ledcAttachPin(TREBLE_BUZZER, TREBLE);
     ledcAttachPin(BASS_BUZZER, BASS);
+
+    menuPrefs.begin("menuPrefs", false);
+    if (!menuPrefs.isKey("orientation"))  menuPrefs.putInt("orientation", DEFAULT_ORIENTATION);
+    else screenOrientation = menuPrefs.getInt("orientation");
+    if (!menuPrefs.isKey("selection"))  menuPrefs.putInt("selection", DEFAULT_SELECTION);
+    else chosenSong = menuPrefs.getInt("selection");
+
     for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft); 
-    userSelectSong(tft);
+    userSelectSong(chosenSong, tft);
 }
 
 void loop()
@@ -71,19 +82,17 @@ void loop()
             playSingleTrack(FreedomMotif, tft, 4);
             break;
         case (4):
-            for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, true);
-            chosenSong = -1;
-            break;
+            for (int i = 0; i < NUM_TRACKS; i++) convertTrack(SongPtrs[i], tft, true); // fall-through to refresh menu
         default:
-            userSelectSong(tft);
+            userSelectSong(chosenSong, tft);
     }
 }
 
-void userSelectSong(TFT_eSPI *tft) {
+void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
     int prevUp = 0, prevDown = 0;
     int currUp = 0, currDown = 0;
     int prevChoice = -1;
-    static int currChoice = 0;
+    int currChoice = defaultChoice;
     bool startPlayer = false;
     tft->setTextSize(2);
     tft->setCursor(0, 0);
@@ -100,6 +109,7 @@ void userSelectSong(TFT_eSPI *tft) {
                 UP_BUTTON = DOWN_BUTTON;
                 DOWN_BUTTON = temp;
                 screenOrientation = (screenOrientation > 1) ? 1 : 3;
+                menuPrefs.putInt("orientation", screenOrientation);
                 tft->setRotation(screenOrientation);
             }
             startPlayer = true;
@@ -120,6 +130,7 @@ void userSelectSong(TFT_eSPI *tft) {
     tft->fillScreen(BACKGROUND_COLOUR);
     tft->setTextSize(1);
     chosenSong = currChoice;
+    menuPrefs.putInt("selection", currChoice);
 }
 
 
