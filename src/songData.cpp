@@ -377,10 +377,14 @@ Track TheLegend3 = {"THE LEGEND - Toby Fox (3/3)", legend3, 50, 46, 24, 18, G3, 
 Track TheLegendBass3 = {"THE LEGEND (Bass Line) (3/3)", legendBass3, 55, 46, 24, 18, F3, E6, false};
 Track FreedomMotif = {"FREEDOM MOTIF", freedomMotif, 31, 107, 16, 8, E4, C6, false};
 
-Track *SongPtrs[NUM_TRACKS] = {
+Track *Tracks[NUM_TRACKS] = {
     &Megalovania, &MegalovaniaBass, 
     &TheLegend1, &TheLegendBass1,
     &TheLegend2, &TheLegendBass2,
     &TheLegend3, &TheLegendBass3, 
     &FreedomMotif,
 };
+
+int DEFAULT_CHANNELS[NUM_CHANNELS] = {TREBLE, BASS};
+
+Song MEGALOVANIA = {"Megalovania - Toby Fox", {&Megalovania, &MegalovaniaBass}, 2, 63, 32, 78, 24, 71};
