@@ -6,7 +6,7 @@ I found a passive piezo buzzer and I wanted it to play Megalovania, so I program
 - Two complete songs (melody and bass parts): MEGALOVANIA and THE LEGEND by Toby Fox
 - Top line shows play time, bar number, note pitch, and song title (max. 30 characters)
 - Rest of the screen (320x170 pixels) is taken up by a 'MIDI'-like visualiser
-- Switch screen orientation between horizontal and vertical (too see more note length vs. pitch)
+- Switch screen orientation between horizontal and vertical (trade-off: note length vs pitch)
 - User preferences: remembers screen orientation and previous menu selection
 
 ### Short-Term Plans
