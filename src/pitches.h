@@ -4,6 +4,7 @@
 #define NUM_FREQS 90 // Range from B0 to DS8
 
 #define REST 0
+#define SONG_END 1
 #define NOTE_B0  31
 #define C1  33
 #define CS1 35

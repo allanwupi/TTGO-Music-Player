@@ -20,6 +20,7 @@ Note legend1[] = {
 {D5,"D5",4},{C5,"C5",2},{E5,"E5",2},
 {D5,"D5",4},{E5,"E5",4},
 {REST,"",8},
+{SONG_END,0,0},
 };
 
 Note legendBass1[] = {
@@ -32,6 +33,7 @@ Note legendBass1[] = {
 {F4,"F4",4},{E4,"E4",2},{A4,"A4",2},//{AS3,"AS3",8},
 {A4,"A4",2},{GS4,"G#4",1},{FS4,"F#4",1},{GS4,"G#4",4},
 {REST,"",8},
+{SONG_END,0,0},
 };
 
 Note legend2[] = {
@@ -74,6 +76,7 @@ Note legend2[] = {
 {G5,"G5",4},{E5,"E5",2},{D5,"D5",2},{E5,"E5",4},{C5,"C5",2},{E5,"E5",2},
 {F5,"F5",6},{E5,"E5",2},{D5,"D5",4},{C5,"C5",4},
 {B4,"B4",8},{E5,"E5",8},
+{SONG_END,0,0},
 };
  
 Note legendBass2[] = {
@@ -114,6 +117,7 @@ Note legendBass2[] = {
 {B2,"B2",8},{G2,"G2",8},
 {AS2,"A#2",16},
 {B2,"B2",8},{GS3,"G#3",8},
+{SONG_END,0,0},
 };
 
 Note legend3[] = {
@@ -134,6 +138,7 @@ Note legend3[] = {
 {E5,"E5",24},
 {REST,"",24},
 {REST,"",24},
+{SONG_END,0,0},
 };
 
 Note legendBass3[] = {
@@ -154,6 +159,7 @@ Note legendBass3[] = {
 {E4,"E4",8},{REST,"",4},{B4,"B4",8},{REST,"",4},
 {B4,"B4",8},{REST,"",4},{E4,"E4",36},
 {REST,"",24},
+{SONG_END,0,0},
 };
 
 Note megalovania[] = {
@@ -254,6 +260,7 @@ Note megalovania[] = {
 
 {AS3,"Bb3",2},{AS3,"Bb3",2},{D5,"D5",4},{A4,"A4",4},{REST,"",2},{GS4,"Ab4",2},{REST,"",2},{G4,"G4",2},{REST,"",2},{F4,"F4",4},{D4,"D4",2},{F4,"F4",2},{G4,"G4",2},
 {C4,"C4",2},{C4,"C4",2},{D5,"D5",4},{A4,"A4",4},{REST,"",2},{GS4,"Ab4",2},{REST,"",2},{G4,"G4",2},{REST,"",2},{F4,"F4",4},{D4,"D4",2},{F4,"F4",2},{G4,"G4",2},
+{SONG_END,0,0},
 };
 
 Note megalovaniaBass[] {
@@ -352,6 +359,7 @@ Note megalovaniaBass[] {
 {REST,"",32},
 {REST,"",32},
 {REST,"",32},
+{SONG_END,0,0},
 };
 
 Note freedomMotif[] = {
@@ -362,8 +370,46 @@ Note freedomMotif[] = {
 {G5,"G5",4},{F5,"F5",2},{E5,"E5",6},{C5,"C5",4},
 {D5,"D5",6},{A4,"A4",6},{D5,"D5",4},
 {E5,"E5",6},{F5,"F5",1},{E5,"E5",1},{D5,"D5",8},
+{SONG_END,0,0},
 };
 
+USong_t uMegalovania = {"MEGALOVANIA - Toby Fox", megalovania, 63, 32};
+USong_t uMegalovaniaBass = {"MEGALOVANIA", megalovaniaBass, 63, 32};
+USong_t uTheLegend1 = {"THE LEGEND - Toby Fox (1/3)", legend1, 272, 8};
+USong_t uTheLegendBass1 = {"THE LEGEND - Toby Fox (1/3)", legendBass1, 272, 8};
+USong_t uTheLegend2 = {"THE LEGEND - Toby Fox (2/3)", legend2, 136, 16};
+USong_t uTheLegendBass2 = {"THE LEGEND - Toby Fox (2/3)", legendBass2, 136, 16};
+USong_t uTheLegend3 = {"THE LEGEND - Toby Fox (3/3)", legend3, 46, 24};
+USong_t uTheLegendBass3 = {"THE LEGEND - Toby Fox (3/3)", legendBass3, 46, 24};
+USong_t uFreedomMotif = {"FREEDOM MOTIF", freedomMotif, 100, 16};
+
+Song_t Megalovania;
+Song_t MegalovaniaBass;
+Song_t TheLegend1;
+Song_t TheLegendBass1;
+Song_t TheLegend2;
+Song_t TheLegendBass2;
+Song_t TheLegend3;
+Song_t TheLegendBass3;
+Song_t FreedomMotif;
+
+USong_t *USongPtrs[NUM_TRACKS] = {
+    &uMegalovania, &uMegalovaniaBass, 
+    &uTheLegend1, &uTheLegendBass1,
+    &uTheLegend2, &uTheLegendBass2,
+    &uTheLegend3, &uTheLegendBass3, 
+    &uFreedomMotif,
+};
+
+Song_t *SongPtrs[NUM_TRACKS] = {
+    &Megalovania, &MegalovaniaBass, 
+    &TheLegend1, &TheLegendBass1,
+    &TheLegend2, &TheLegendBass2,
+    &TheLegend3, &TheLegendBass3, 
+    &FreedomMotif,
+};
+
+/* DEPRECATED – USER NO LONGER NEEDS TO PROVIDE FULL SONG DETAILS
 Song_t Megalovania = {"MEGALOVANIA - Toby Fox", megalovania, 766, 63, 32, 78, D3, A6};
 Song_t MegalovaniaBass = {"MEGALOVANIA", megalovaniaBass, 978, 63, 32, 78, AS2, D4};
 Song_t TheLegend1 = {"THE LEGEND - Toby Fox (1/3)", legend1, 33, 272, 8, 9, G3, E6};
@@ -373,11 +419,4 @@ Song_t TheLegendBass2 = {"THE LEGEND - Toby Fox (2/3)", legendBass2, 157, 136, 1
 Song_t TheLegend3 = {"THE LEGEND - Toby Fox (3/3)", legend3, 49, 46, 24, 18, G3, E6};
 Song_t TheLegendBass3 = {"THE LEGEND - Toby Fox (3/3)", legendBass3, 55, 46, 24, 18, F3, E6};
 Song_t FreedomMotif = {"FREEDOM MOTIF", freedomMotif, 31, 100, 16, 8, E4, C6};
-
-Song_t *SongPtrs[NUM_TRACKS] = {
-    &Megalovania, &MegalovaniaBass, 
-    &TheLegend1, &TheLegendBass1,
-    &TheLegend2, &TheLegendBass2,
-    &TheLegend3, &TheLegendBass3, 
-    &FreedomMotif,
-};
+*/

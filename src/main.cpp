@@ -30,13 +30,13 @@ int screenOrientation = 3;
 int chosenSong = 0;
 
 void userSelectSong(TFT_eSPI *tft);
-void convertToAbsoluteTime(Song_t song);
+void convertTrack(Song_t song, USong_t usong);
 unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
 unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsed = 0);
 
 void setup()
 {
-    //Serial.begin(115200);
+    Serial.begin(115200);
     pinMode(TREBLE_BUZZER, OUTPUT);
     pinMode(BASS_BUZZER, OUTPUT);
     pinMode(15, OUTPUT);
@@ -52,8 +52,12 @@ void setup()
     ledcSetup(BASS, 20000, 16);
     ledcAttachPin(TREBLE_BUZZER, TREBLE);
     ledcAttachPin(BASS_BUZZER, BASS);
+    delay(10);
+    tft->fillScreen(TFT_RED);
+    Serial.printf("attempting to initialise songs...\n");
+    convertTrack(Megalovania, uMegalovania);
+    convertTrack(MegalovaniaBass, uMegalovaniaBass);
     userSelectSong(tft);
-    for (int i = 0; i < NUM_TRACKS; i++) convertToAbsoluteTime(*SongPtrs[i]);
 }
 
 void loop()
@@ -127,24 +131,55 @@ void userSelectSong(TFT_eSPI *tft) {
     chosenSong = currChoice;
 }
 
-void convertToAbsoluteTime(Song_t song) {
-    int Time = 0; // Absolute time steps
-    for (int i = 0; i < song.numNotes; i++) {
-        Time += song.notes[i].noteLength;
-        song.notes[i].noteLength = Time;
+void convertTrack(Song_t song, USong_t usong) {
+    song.name = usong.name;
+    song.notes = usong.notes;
+    song.period = usong.period;
+    song.bar = usong.bar;
+    delay(10);
+    Serial.printf("%s: %d %d\n",song.name, song.period, song.bar);
+    int numNotes = 0; // Song ends in note {SONG_END, "", 0}
+    int time = 0; // Absolute time steps
+    int minFreq = DS8+1;
+    int maxFreq = NOTE_B0-1;
+    for (int k = 0; k < 10; k++)
+        Serial.printf("{%d, %3s, %d},",song.notes[k].pitch, song.notes[k].noteName, song.notes[k].noteLength);
+    Serial.printf("starting conversion\n");
+    int i = 0;
+    while (usong.notes[i].pitch != SONG_END) {
+        time += usong.notes[i].noteLength;
+        usong.notes[i].noteLength = time;
+        if (usong.notes[i].pitch && usong.notes[i].pitch < minFreq) minFreq = usong.notes[i].pitch;
+        if (usong.notes[i].pitch && usong.notes[i].pitch > maxFreq) maxFreq = usong.notes[i].pitch;
+        numNotes++;
+        i++;
     }
-}
-
-unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsed) {
-    int freq1 = 0, freq2 = 0;
+        Serial.println(i);
+    int numBars = time / usong.bar;
     int n, minN, maxN;
     for (n = 1 ; n <= NUM_FREQS ; n++) {
-        if (song.minFreq == TONE_INDEX[n]) minN = n;
-        if (song.maxFreq == TONE_INDEX[n]) {
+        if (minFreq == TONE_INDEX[n]) minN = n;
+        if (maxFreq == TONE_INDEX[n]) {
             maxN = n;
             break;
         }
     }
+    song.numNotes = numNotes;
+    song.numBars = numBars;
+    song.minFreq = minFreq;
+    song.maxFreq = maxFreq;
+    song.minN = minN;
+    song.maxN = maxN;
+    Serial.printf("%s %d %d %d %d %d/%d\n",
+            song.name, song.numNotes, song.period, song.bar, song.numBars, song.minN, song.maxN);
+    for (int k = 0; k < 10; k++)
+        Serial.printf("%d:{%d, %3s, %d}\n", k, song.notes[k].pitch, song.notes[k].noteName, song.notes[k].noteLength);
+    delay(10);
+}
+
+unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsed) {
+    int n, freq1 = 0, freq2 = 0;
+    const int minN = song.minN, maxN = song.maxN;
     const int T0 = song.period;
     const int divisions = song.bar * barsToDisplay;
     const int dx = 320/divisions;
@@ -209,15 +244,8 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
 }
 
 unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsed) {
-    int freq1 = 0, freq2 = 0;
-    int n, minN, maxN;
-    for (n = 1 ; n <= NUM_FREQS ; n++) {
-        if (bass.minFreq == TONE_INDEX[n]) minN = n;
-        if (song.maxFreq == TONE_INDEX[n]) {
-            maxN = n;
-            break;
-        }
-    }
+    int n, freq1 = 0, freq2 = 0;
+    const int minN = song.minN, maxN = song.maxN;
     const int T0 = song.period;
     const int divisions = song.bar * barsToDisplay;
     const int dx = 320/divisions;
