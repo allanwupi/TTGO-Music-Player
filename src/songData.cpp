@@ -365,8 +365,8 @@ Note freedomMotif[] = {
 {E5,"E5",6},{F5,"F5",1},{E5,"E5",1},{D5,"D5",8},
 };
 
-Song_t Megalovania = {"MEGALOVANIA - Toby Fox", megalovania, 766, 63, 32, 78, TFT_SILVER, D3, A6, false};
-Song_t MegalovaniaBass = {"MEGALOVANIA (Bass Line)", megalovaniaBass, 978, 63, 32, 78, TFT_DARKGREY, AS2, D4, false};
+Song_t Megalovania = {"MEGALOVANIA - Toby Fox", megalovania, 766, 63, 32, 78, TFT_BLUE, D3, A6, false};
+Song_t MegalovaniaBass = {"MEGALOVANIA (Bass Line)", megalovaniaBass, 978, 63, 32, 78, TFT_NAVY, AS2, D4, false};
 Song_t TheLegend1 = {"THE LEGEND - Toby Fox (1/3)", legend1, 33, 272, 8, 9, TFT_CYAN, G3, E6, false};
 Song_t TheLegendBass1 = {"THE LEGEND (Bass Line) (1/3)", legendBass1, 20, 272, 8, 9, 0xD817, G3, E6, false};
 Song_t TheLegend2 = {"THE LEGEND - Toby Fox (2/3)", legend2, 134, 136, 16, 33, TFT_CYAN, G3, E6, false};
