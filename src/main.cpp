@@ -132,21 +132,21 @@ void userSelectSong(TFT_eSPI *tft) {
 
 
 void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
+    int currFreq;
     int minFreq = DS8;
     int maxFreq = NOTE_B0;
-    int currFreq;
-    if (!usong->converted) {
-        int time = 0; // Convert to absolute time steps
-        for (int i = 0; i < usong->numNotes; i++) {
+    int time = 0; // Convert to absolute time steps
+    for (int i = 0; i < usong->numNotes; i++) {
+        if (!usong->converted) {
             time += usong->notes[i].noteLength;
             usong->notes[i].noteLength = time;
-            currFreq = usong->notes[i].pitch;
-            if (currFreq && currFreq < minFreq) minFreq = currFreq;
-            if (currFreq && currFreq > maxFreq) maxFreq = currFreq;
         }
-        usong->converted = true;
-        usong->numBars = time / (usong->bar);
+        currFreq = usong->notes[i].pitch;
+        if (currFreq && currFreq < minFreq) minFreq = currFreq;
+        if (currFreq && currFreq > maxFreq) maxFreq = currFreq;
     }
+    usong->converted = true;
+    usong->numBars = time / (usong->bar);
     int n, minN, maxN;
     for (n = 1; n <= NUM_FREQS; n++) {
         if (TONE_INDEX[n] == minFreq) minN = n;
