@@ -2,7 +2,7 @@
 #include "pitches.h"
 
 const char *SONG_DESCRIPTIONS[NUM_SONGS+1] = {
-    "1. MEGALOVANIA (2:39)",
+    "1. MEGALOVANIA (2:37)",
     "2. THE LEGEND (1:49)",
     "3. FREEDOM MOTIF (0:12) ",
     "4. ------ ",

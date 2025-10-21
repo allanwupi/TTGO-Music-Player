@@ -133,7 +133,6 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
     menuPrefs.putInt("selection", currChoice);
 }
 
-
 void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
     int currFreq;
     int minFreq = DS8;
@@ -148,8 +147,10 @@ void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
         if (currFreq && currFreq < minFreq) minFreq = currFreq;
         if (currFreq && currFreq > maxFreq) maxFreq = currFreq;
     }
-    usong->converted = true;
-    usong->numBars = time / (usong->bar);
+    if (!usong->converted) {
+        usong->numBars = time / (usong->bar);
+        usong->converted = true;
+    }
     int n, minN, maxN;
     for (n = 1; n <= NUM_FREQS; n++) {
         if (TONE_INDEX[n] == minFreq) minN = n;
@@ -160,11 +161,13 @@ void convertTrack(Song_t *usong, TFT_eSPI *tft, bool printToDisplay) {
     }
     usong->minFreq = minN;
     usong->maxFreq = maxN;
+    int songDuration = usong->period * usong->numBars * usong->bar;
+    int minutes = songDuration/60000, seconds = (songDuration/1000)%60;
     if (printToDisplay) {
         tft->setCursor(0,0);
-        tft->printf("[%d] %s\n\n", usong->numNotes, usong->name);
-        tft->printf("T0=%dms bars=%dx%d min=%-4d[%02d].max=%-4d[%02d]\n\n",
-            usong->period, usong->numBars, usong->bar, minFreq, usong->minFreq, maxFreq, usong->maxFreq);
+        tft->printf("[%d] [%dm%02ds] %s\n\n", usong->numNotes, minutes, seconds, usong->name);
+        tft->printf("T0=%dms bars=%dx%d lo=%dHz hi=%dHz [%02d-%02d]\n\n",
+            usong->period, usong->numBars, usong->bar, minFreq, maxFreq, usong->minFreq, usong->maxFreq);
         for (int k = 0; k < usong->bar; k++) {
             tft->printf("%02d:{%4d,%3s,%3d}  ", k, usong->notes[k].pitch, usong->notes[k].noteName, usong->notes[k].noteLength);
             if (k % 2 == 1) tft->printf("\n");
@@ -240,7 +243,7 @@ unsigned long playSingleTrack(Song_t song, TFT_eSPI *tft, int barsToDisplay, uns
                 finished = true;
             }
         }
-        if (millis() - startTime > T0) {
+        if (millis() - startTime >= T0) {
             movedBar = false;
             printed = false;
             now++;
@@ -332,11 +335,12 @@ unsigned long playTracks(Song_t song, Song_t bass, TFT_eSPI *tft, int barsToDisp
                 finishedBass = true;
             }
         }
-        if (millis() - startTime > T0) {
+        if (millis() - startTime >= T0) {
             movedBar = false;
             wroteTreble = false;
             wroteBass = false;
             now++;
+            Serial.println(millis()-startTime);
             startTime = millis();
         }
     }
