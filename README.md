@@ -2,11 +2,11 @@
 I found a passive piezo buzzer and I wanted it to play Megalovania, so I programmed my T-Display S3 to do that.
 
 ### Current Features
-- Play sequences of notes (integer pitch and duration) on a connected piezo buzzer
-- Two fully playable songs (melody and bass line): MEGALOVANIA, THE LEGEND
+- Play sequences of notes (treble and bass tracks) on two connected piezo buzzers
+- Two complete songs (melody and bass parts): MEGALOVANIA and THE LEGEND by Toby Fox
 - Top line shows play time, bar number, note pitch, and song title (max. 30 characters)
 - Rest of the screen (320x150 pixels) is taken up by a 'MIDI'-like visualiser
-- Preferences: remembers screen orientation and last menu selection
+- User preferences: remembers screen orientation and last menu selection
 
 ### Short-Term Plans
 - Be able to switch between horizontal (currently working) and vertical layouts
