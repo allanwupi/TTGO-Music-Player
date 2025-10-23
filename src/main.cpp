@@ -228,8 +228,8 @@ unsigned long playSingle(Track song, TFT_eSPI *tft, int barsToDisplay, unsigned 
     tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
     tft->printf("%d:%02d  --/--  ---  ", prevElapsed/60000, (prevElapsed/1000)%60);
-    if (HEADER_WIDTH > 20) tft->printf("\n\n %27s", song.name);
-    else tft->printf("%27s", song.name);
+    if (HEADER_WIDTH > 20) tft->printf("\n\n %.27s", song.name);
+    else tft->printf("%s", song.name);
     tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
     int now = 0, next = 0, bars = 0, i = 0, j = 0;
     int stop = song.notes[song.size-1].time;
@@ -294,8 +294,8 @@ unsigned long playTracks(Track tracks[NUM_CHANNELS], TFT_eSPI *tft, int barsToDi
     tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
     tft->printf("%d:%02d  --/--  ---.---  ", prevElapsed/60000, (prevElapsed/1000)%60);
-    if (HEADER_WIDTH > 20) tft->printf("\n\n %-27s", tracks[0].name);
-    else tft->printf("%27s", tracks[0].name);
+    if (HEADER_WIDTH > 20) tft->printf("\n\n %.27s", tracks[0].name);
+    else tft->printf("%s", tracks[0].name);
     tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
     // Set up required variables for track playback
     bool movedBar = false;
