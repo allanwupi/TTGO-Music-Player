@@ -369,7 +369,6 @@ unsigned long playMultiTrack(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, un
             prevTick = millis();
         }
     }
-    ledcWriteTone(TREBLE, 0);
-    ledcWriteTone(BASS, 0);
+    for (int k = 0; k < NUM_CHANNELS; k++) ledcWriteTone(m->channels[k], 0);
     return millis() - startTime;
 }
