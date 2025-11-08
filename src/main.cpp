@@ -8,7 +8,7 @@
 #include "songs.h"
 #include "pitches.h"
 
-const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v3.3";
+const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v3.5";
 const char *AUTHOR_DETAILS = " by Allan Wu (08/11/2025)";
 Preferences menuPrefs;
 TFT_eSPI TFT = TFT_eSPI();
