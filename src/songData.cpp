@@ -104,7 +104,6 @@ MultiTrack LEGEND1 = {
     .tracks = {&TheLegend1_T, &TheLegend1_B},
     .size = 2,
     .channels = {TREBLE, BASS},
-    .colours = {TFT_CYAN, TFT_DARKCYAN}
 };
 
 MultiTrack LEGEND2 = {
@@ -112,7 +111,6 @@ MultiTrack LEGEND2 = {
     .tracks = {&TheLegend2_T, &TheLegend2_B},
     .size = 2,
     .channels = {TREBLE, BASS},
-    .colours = {TFT_CYAN, TFT_DARKCYAN}
 };
 
 MultiTrack LEGEND3 = {
@@ -120,7 +118,6 @@ MultiTrack LEGEND3 = {
     .tracks = {&TheLegend3_T, &TheLegend3_B},
     .size = 2,
     .channels = {TREBLE, BASS},
-    .colours = {TFT_CYAN, TFT_DARKCYAN}
 };
 
 MultiTrack FREEDOM_MOTIF = {
