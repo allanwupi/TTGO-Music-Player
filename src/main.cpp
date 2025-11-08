@@ -248,7 +248,7 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
             tft->printf("%d:%02d", minutes, seconds);
             prevSeconds = seconds;
         }
-        if (now % bar == 0 && !movedBar) {
+        if (!movedBar && now % bar == 0) {
             if (now % divisions == 0) tft->fillRect(0, HEADER_WIDTH+1, SCREEN_LENGTH, SCREEN_WIDTH-HEADER_WIDTH-1, BG_COLOUR); 
             bars++;
             tft->setCursor(HEADER_DATUM,HEADER_DATUM);
@@ -256,7 +256,7 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
             movedBar = true;
         }
         for (int k = 0; k < NUM_CHANNELS; k++) {
-            if (next[k] == now && !busy[k]) {
+            if (!busy[k] && next[k] == now) {
                 int i = ptrs[k];
                 busy[k] = true;
                 int delta = (i > 0) ? (m->tracks[k]->notes[i].time - m->tracks[k]->notes[i-1].time) : m->tracks[k]->notes[i].time;
@@ -279,6 +279,9 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
             for (int k = 0; k < NUM_CHANNELS; k++) busy[k] = 0;
             now++;
             prevTick = millis();
+            continue;
+        } else {
+            delay(1); // insert 1 ms delay to reduce computation
         }
     }
     for (int k = 0; k < NUM_CHANNELS; k++) ledcWriteTone(m->channels[k], 0);
