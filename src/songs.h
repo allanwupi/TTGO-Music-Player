@@ -46,15 +46,13 @@ typedef struct {
     int colours[MAX_CHANNELS]; // Array of TFT colours
 } MultiTrack;
 
-extern Note megalovania_t[];
-extern Note megalovania_b[];
-extern Note legend1_t[];
-extern Note legend1_b[];
-extern Note legend2_t[];
-extern Note legend2_b[];
-extern Note legend3_t[];
-extern Note legend3_b[];
-extern Note freedomMotif[];
+extern MultiTrack MEGALOVANIA;
+extern MultiTrack LEGEND1;
+extern MultiTrack LEGEND2;
+extern MultiTrack LEGEND3;
+extern MultiTrack FREEDOM_MOTIF;
+
+extern Track *Tracks[NUM_TRACKS];
 
 extern Track Megalovania_T;
 extern Track Megalovania_B;
@@ -66,6 +64,14 @@ extern Track TheLegend3_T;
 extern Track TheLegend3_B;
 extern Track FreedomMotif;
 
-extern Track *Tracks[NUM_TRACKS];
+extern Note megalovania_t[];
+extern Note megalovania_b[];
+extern Note legend1_t[];
+extern Note legend1_b[];
+extern Note legend2_t[];
+extern Note legend2_b[];
+extern Note legend3_t[];
+extern Note legend3_b[];
+extern Note freedomMotif[];
 
 #endif

@@ -1,5 +1,6 @@
 #include "songs.h"
 #include "pitches.h"
+#include <TFT_eSPI.h>
 
 const char *SONG_DESCRIPTIONS[NUM_SONGS+1] = {
     "1. MEGALOVANIA (2m37s)",
@@ -119,11 +120,50 @@ Track FreedomMotif = {
     .converted = false
 };
 
-
 Track *Tracks[NUM_TRACKS] = {
     &Megalovania_T, &Megalovania_B, 
     &TheLegend1_T, &TheLegend1_B,
     &TheLegend2_T, &TheLegend2_B,
     &TheLegend3_T, &TheLegend3_B, 
     &FreedomMotif,
+};
+
+MultiTrack MEGALOVANIA = {
+    .name = "MEGALOVANIA - Toby Fox",
+    .tracks = {&Megalovania_T, &Megalovania_B},
+    .size = 2,
+    .channels = {TREBLE, BASS},
+    .colours = {TFT_CYAN, TFT_DARKCYAN}
+};
+
+MultiTrack LEGEND1 = {
+    .name = "THE LEGEND - Toby Fox (1/3)",
+    .tracks = {&TheLegend1_T, &TheLegend1_B},
+    .size = 2,
+    .channels = {TREBLE, BASS},
+    .colours = {TFT_CYAN, TFT_DARKCYAN}
+};
+
+MultiTrack LEGEND2 = {
+    .name = "THE LEGEND - Toby Fox (2/3)",
+    .tracks = {&TheLegend2_T, &TheLegend2_B},
+    .size = 2,
+    .channels = {TREBLE, BASS},
+    .colours = {TFT_CYAN, TFT_DARKCYAN}
+};
+
+MultiTrack LEGEND3 = {
+    .name = "THE LEGEND - Toby Fox (3/3)",
+    .tracks = {&TheLegend3_T, &TheLegend3_B},
+    .size = 2,
+    .channels = {TREBLE, BASS},
+    .colours = {TFT_CYAN, TFT_DARKCYAN}
+};
+
+MultiTrack FREEDOM_MOTIF = {
+    .name = "FREEDOM MOTIF – Toby Fox",
+    .tracks = {&FreedomMotif},
+    .size = 1,
+    .channels = {TREBLE},
+    .colours = {TFT_GOLD}
 };
