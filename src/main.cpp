@@ -322,10 +322,10 @@ unsigned long playMultiTrack(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, un
     tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
     // Set up required variables for track playback
     bool movedBar = false;
-    bool busy[NUM_CHANNELS] = {0, 0};
-    int freq[NUM_CHANNELS] = {0, 0};
-    int ptrs[NUM_CHANNELS] = {0, 0};
-    int next[NUM_CHANNELS] = {0, 0};
+    bool busy[NUM_CHANNELS] = {0};
+    int freq[NUM_CHANNELS] = {0};
+    int ptrs[NUM_CHANNELS] = {0};
+    int next[NUM_CHANNELS] = {0};
     int now = 0, bars = 0, n = 1;
     const int stop = m->tracks[0]->notes[m->tracks[0]->size-1].time;
     int minutes = prevElapsed/60000, seconds = (prevElapsed/1000)%60, prevSeconds = -1;

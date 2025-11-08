@@ -124,6 +124,6 @@ Track *Tracks[NUM_TRACKS] = {
     &Megalovania_T, &Megalovania_B, 
     &TheLegend1_T, &TheLegend1_B,
     &TheLegend2_T, &TheLegend2_B,
-    &TheLegend3_T, &TheLegend2_B, 
+    &TheLegend3_T, &TheLegend3_B, 
     &FreedomMotif,
 };
