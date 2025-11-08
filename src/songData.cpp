@@ -19,9 +19,6 @@ Track Megalovania_T = {
     .beat = 63,
     .bar = 32,
     .numBars = 78,
-    .minFreq = D3,
-    .maxFreq = A6,
-    .converted = false
 };
 
 Track Megalovania_B = {
@@ -30,10 +27,7 @@ Track Megalovania_B = {
     .size = 978, 
     .beat = 63,
     .bar = 32,
-    .numBars = 78, 
-    .minFreq = AS2,
-    .maxFreq = D4,
-    .converted = false
+    .numBars = 78,
 };
 
 Track TheLegend1_T = {
@@ -43,9 +37,6 @@ Track TheLegend1_T = {
     .beat = 272,
     .bar = 8,
     .numBars = 9,
-    .minFreq = G3,
-    .maxFreq = E6,
-    .converted = false
 };
 
 Track TheLegend1_B = {
@@ -55,9 +46,6 @@ Track TheLegend1_B = {
     .beat = 272,
     .bar = 8,
     .numBars = 9,
-    .minFreq = G3,
-    .maxFreq = E6, 
-    .converted = false
 };
 
 Track TheLegend2_T = {
@@ -67,9 +55,6 @@ Track TheLegend2_T = {
     .beat = 136,
     .bar = 16,
     .numBars = 33,
-    .minFreq = G3,
-    .maxFreq = E6,
-    .converted = false
 };
 
 Track TheLegend2_B = {
@@ -79,9 +64,6 @@ Track TheLegend2_B = {
     .beat = 136,
     .bar = 16,
     .numBars = 33,
-    .minFreq = C2,
-    .maxFreq = E6,
-    .converted = false
 };
 
 Track TheLegend3_T = {
@@ -91,9 +73,6 @@ Track TheLegend3_T = {
     .beat = 46,
     .bar = 24,
     .numBars = 18,
-    .minFreq = G3,
-    .maxFreq = E6,
-    .converted = false
 };
 
 Track TheLegend3_B = {
@@ -103,9 +82,6 @@ Track TheLegend3_B = {
     .beat = 46,
     .bar = 24,
     .numBars = 18,
-    .minFreq = F3,
-    .maxFreq = E6,
-    .converted = false
 };
 
 Track FreedomMotif = {
@@ -115,9 +91,6 @@ Track FreedomMotif = {
     .beat = 107,
     .bar = 16,
     .numBars = 8,
-    .minFreq = E4,
-    .maxFreq =C6,
-    .converted = false
 };
 
 Track *Tracks[NUM_TRACKS] = {
