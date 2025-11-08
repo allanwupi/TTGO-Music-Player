@@ -3,7 +3,7 @@
 
 const char *SONG_DESCRIPTIONS[NUM_SONGS+1] = {
     "1. MEGALOVANIA (2m37s)",
-    "2. THE LEGEND (1m47s)",
+    "2. THE LEGEND (1m48s)",
     "3. FREEDOM MOTIF (0m13s)",
     "4. -------------",
     "5. -------------",

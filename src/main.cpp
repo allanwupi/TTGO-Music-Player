@@ -33,7 +33,7 @@ int HEADER_WIDTH = 20;
 #define BUFFER_CHARS    50
 
 #define TITLE_COLOUR        TFT_WHITE       // Program name
-#define SELECTED_COLOUR     TFT_WHITE      	// Selected option
+#define SELECTED_COLOUR     TFT_WHITE       // Selected option
 #define DESELECTED_COLOUR   0x2965          // Greyed-out option
 #define HEADER_COLOUR       TFT_WHITE       // Top description
 #define HI_COLOUR           TFT_CYAN        // Treble track
@@ -77,7 +77,7 @@ MultiTrack LEGEND3 = {
 
 void setup()
 {
-    Serial.begin(115200);
+    // Serial.begin(115200);
     // Setup pins and LEDC channels for tone generation
     pinMode(TREBLE_BUZZER, OUTPUT);
     pinMode(BASS_BUZZER, OUTPUT);
