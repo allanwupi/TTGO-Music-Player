@@ -211,7 +211,7 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
     int hi = 1, lo = NUM_FREQS-1;
     const int NUM_CHANNELS = m->size;
     if (!(m->colours[0])) m->colours[0] = HI_COLOUR;
-    if (m->size > 1 && !(m->colours[1])) m->colours[1] = LO_COLOUR;
+    if (NUM_CHANNELS > 1 && !(m->colours[1])) m->colours[1] = LO_COLOUR;
     for (int k = 0; k < NUM_CHANNELS; k++) {
         if (m->tracks[k]->lo < lo) lo = m->tracks[k]->lo;
         if (m->tracks[k]->hi > hi) hi = m->tracks[k]->hi;
@@ -222,7 +222,7 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
     const int x0 = (HEADER_WIDTH > 20) ? 5 : 0;
     const int dy = (SCREEN_WIDTH-HEADER_WIDTH)/(hi - lo);
     const char *note_t = m->tracks[0]->notes[0].name;
-    const char *note_b = (m->size > 1) ? m->tracks[1]->notes[0].name : "  ";
+    const char *note_b = (NUM_CHANNELS > 1) ? m->tracks[1]->notes[0].name : "  ";
     // Print header information
     tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
