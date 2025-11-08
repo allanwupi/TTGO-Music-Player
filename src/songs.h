@@ -26,15 +26,16 @@ typedef struct {
 
 typedef struct {
     const char *name; // Song name (27 characters maximum)
-    Note *notes; // Array of notes {freqIndex, time}
+    Note *notes; // Array of notes {pitch, name, duration}
     int size; // Size of note array
-    int beat; // Millisecond duration of shortest note
-    int bar; // Number of shortest note durations in 1 bar
+    int beat; // Base note duration in milliseconds (shortest note)
+    int bar; // Number of shortest notes that make up 1 bar
+    // Remaining members are set during conversion: do NOT initialise
     int numBars; // Length of the song in bars
-    Pitch minFreq; // Used for scaling TFT, converts to index into TONE_INDEX
-    Pitch maxFreq; // Used for scaling TFT, converts to index into TONE_INDEX
-    int lo; // Frequency index
-    int hi; // Frequency index
+    Pitch minFreq; // Used to draw lines in note visualiser
+    Pitch maxFreq; // Used to draw lines in note visualiser
+    int lo; // Array index into TONE_INDEX
+    int hi; // Array index into TONE_INDEX
     bool converted; // Notes must be converted before playing
 } Track;
 
