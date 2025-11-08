@@ -286,6 +286,9 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
             for (int k = 0; k < NUM_CHANNELS; k++) busy[k] = 0;
             now++;
             prevTick = millis();
+            continue;
+        } else {
+            delayMicroseconds(500); // delay 0.5 ms to reduce loop computations
         }
     }
     for (int k = 0; k < NUM_CHANNELS; k++) ledcWriteTone(m->channels[k], 0);
