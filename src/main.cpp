@@ -162,7 +162,6 @@ void convertTrack(Track *usong, TFT_eSPI *tft) {
         if (currFreq && currFreq < minFreq) minFreq = currFreq;
         if (currFreq && currFreq > maxFreq) maxFreq = currFreq;
     }
-    usong->numBars = time / (usong->bar);
     int n, minN, maxN;
     for (n = 1; n <= NUM_FREQS; n++) {
         if (TONE_INDEX[n] == minFreq) minN = n;
@@ -171,6 +170,7 @@ void convertTrack(Track *usong, TFT_eSPI *tft) {
             break;
         }
     }
+    usong->numBars = time / (usong->bar);
     usong->minFreq = (Pitch)minFreq;
     usong->maxFreq = (Pitch)maxFreq;
     usong->lo = minN;
