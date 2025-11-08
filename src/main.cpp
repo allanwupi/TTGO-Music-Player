@@ -180,23 +180,19 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
 }
 
 void convertTrack(Track *usong, TFT_eSPI *tft) {
+    if (usong->converted) return;
     int currFreq;
     int minFreq = DS8;
     int maxFreq = NOTE_B0;
     int time = 0; // Convert note durations to absolute end time
     for (int i = 0; i < usong->size; i++) {
-        if (!usong->converted) {
-            time += usong->notes[i].time;
-            usong->notes[i].time = time;
-        }
+        time += usong->notes[i].time;
+        usong->notes[i].time = time;
         currFreq = usong->notes[i].pitch;
         if (currFreq && currFreq < minFreq) minFreq = currFreq;
         if (currFreq && currFreq > maxFreq) maxFreq = currFreq;
     }
-    if (!usong->converted) {
-        usong->numBars = time / (usong->bar);
-        usong->converted = true;
-    }
+    usong->numBars = time / (usong->bar);
     int n, minN, maxN;
     for (n = 1; n <= NUM_FREQS; n++) {
         if (TONE_INDEX[n] == minFreq) minN = n;
@@ -209,6 +205,7 @@ void convertTrack(Track *usong, TFT_eSPI *tft) {
     usong->maxFreq = (Pitch)maxFreq;
     usong->lo = minN;
     usong->hi = maxN;
+    usong->converted = true;
 }
 
 void displayTrackInfo(Track *song, TFT_eSPI *tft) {
