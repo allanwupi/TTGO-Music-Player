@@ -1,6 +1,6 @@
-// TTGO MUSIC PLAYER v3.3
+// TTGO MUSIC PLAYER v3.5
 // By Allan Wu
-// Updated: 21 October 2025
+// Updated: 8 November 2025
 
 #include <Arduino.h>
 #include <TFT_eSPI.h>
