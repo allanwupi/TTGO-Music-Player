@@ -133,7 +133,6 @@ MultiTrack MEGALOVANIA = {
     .tracks = {&Megalovania_T, &Megalovania_B},
     .size = 2,
     .channels = {TREBLE, BASS},
-    .colours = {TFT_CYAN, TFT_DARKCYAN}
 };
 
 MultiTrack LEGEND1 = {
