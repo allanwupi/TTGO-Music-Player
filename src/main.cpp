@@ -43,7 +43,7 @@ int HEADER_WIDTH = 20;
 void userSelectSong(int defaultChoice, TFT_eSPI *tft);
 void convertTrack(Track *usong, TFT_eSPI *tft);
 void displayTrackInfo(Track *song, TFT_eSPI *tft);
-unsigned long playMultiTrack(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsedMillis = 0);
+unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay = 1, unsigned long elapsedMillis = 0);
 
 void setup()
 {
@@ -79,15 +79,15 @@ void loop()
     unsigned long runtime = 0;
     switch (chosenSong) {
         case (0):
-            playMultiTrack(&MEGALOVANIA, tft);
+            play(&MEGALOVANIA, tft);
             break;
         case (1):
-            runtime += playMultiTrack(&LEGEND1, tft, 2, runtime);
-            runtime += playMultiTrack(&LEGEND2, tft, 2, runtime);
-            runtime += playMultiTrack(&LEGEND3, tft, 2, runtime);
+            runtime += play(&LEGEND1, tft, 2, runtime);
+            runtime += play(&LEGEND2, tft, 2, runtime);
+            runtime += play(&LEGEND3, tft, 2, runtime);
             break;
         case (2):
-            playMultiTrack(&FREEDOM_MOTIF, tft, 4);
+            play(&FREEDOM_MOTIF, tft, 4);
             break;
         case (5):
             for (int i = 0; i < NUM_TRACKS; i++) displayTrackInfo(Tracks[i], tft);
@@ -207,7 +207,7 @@ void displayTrackInfo(Track *song, TFT_eSPI *tft) {
     tft->fillScreen(BG_COLOUR);
 }
 
-unsigned long playMultiTrack(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsedMillis) {
+unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsedMillis) {
     int hi = 1, lo = NUM_FREQS-1;
     const int NUM_CHANNELS = m->size;
     for (int k = 0; k < NUM_CHANNELS; k++) {
