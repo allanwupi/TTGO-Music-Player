@@ -231,10 +231,18 @@ void displayTrackInfo(Track *song, TFT_eSPI *tft) {
     tft->fillScreen(BG_COLOUR);
 }
 
-void playHelper(MultiTrack *m, TFT_eSPI *tft,
-    int *hi, int *lo, int *T0, int *bar, int *div, int *dx, int *dy, int *x0,
-    int barsToDisplay, unsigned long elapsedMillis)
-{
+struct Display {
+    int *hi;
+    int *lo;
+    int *T0; 
+    int *bar;
+    int *div;
+    int *dx;
+    int *dy;
+    int *x0;
+};
+
+void playHelper(MultiTrack *m, TFT_eSPI *tft, struct Display p, int barsToDisplay, unsigned long elapsedMillis) {
     // Print header information
     tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
@@ -243,27 +251,28 @@ void playHelper(MultiTrack *m, TFT_eSPI *tft,
     else tft->printf("%s", m->name);
     tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
     // Calculate parameters for visualiser
-    *hi = 1;
-    *lo = NUM_FREQS-1;
+    *p.hi = 1;
+    *p.lo = NUM_FREQS-1;
     if (!(m->colours[0])) m->colours[0] = HI_COLOUR;
     if (m->size > 1 && !(m->colours[1])) m->colours[1] = LO_COLOUR;
     for (int k = 0; k < m->size; k++) {
-        if (m->tracks[k]->lo < *lo) *lo = m->tracks[k]->lo;
-        if (m->tracks[k]->hi > *hi) *hi = m->tracks[k]->hi;
+        if (m->tracks[k]->lo < *p.lo) *p.lo = m->tracks[k]->lo;
+        if (m->tracks[k]->hi > *p.hi) *p.hi = m->tracks[k]->hi;
     }
-    *T0 = m->tracks[0]->beat;
-    *bar = m->tracks[0]->bar;
-    *div = *bar * barsToDisplay;
-    *dx = ((SCREEN_LENGTH < T_DISPLAY_COLS) ? 160 : 320)/(*div);
-    *dy = (SCREEN_WIDTH-HEADER_WIDTH)/(*hi - *lo);
-    *x0 = (HEADER_WIDTH > 20) ? 5 : 0;
+    *p.T0 = m->tracks[0]->beat;
+    *p.bar = m->tracks[0]->bar;
+    *p.div = *p.bar * barsToDisplay;
+    *p.dx = ((SCREEN_LENGTH < T_DISPLAY_COLS) ? 160 : 320)/(*p.div);
+    *p.dy = (SCREEN_WIDTH-HEADER_WIDTH)/(*p.hi - *p.lo);
+    *p.x0 = (HEADER_WIDTH > 20) ? 5 : 0;
 }
 
 unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsedMillis) {
     if (m == NULL) return 0;
     // Set up required variables for track playback
     int hi, lo, T0, bar, div, dx, dy, x0;
-    playHelper(m, tft, &hi, &lo, &T0, &bar, &div, &dx, &dy, &x0, barsToDisplay, elapsedMillis);
+    struct Display params = {&hi, &lo, &T0, &bar, &div, &dx, &dy, &x0};
+    playHelper(m, tft, params, barsToDisplay, elapsedMillis);
     const int NUM_CHANNELS = m->size;
     char note_t[NOTE_NAME_LEN+1] = "--";
     char note_b[NOTE_NAME_LEN+1] = "--";
