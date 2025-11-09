@@ -2,7 +2,7 @@
 #define SONGS_H
 #include "pitches.h"
 
-#define NUM_PLAYABLE_SONGS 2
+#define NUM_PLAYABLE_SONGS 3
 #define NUM_MENU_OPTIONS 6
 #define NUM_TRACKS 9
 #define MAX_CHANNELS 8

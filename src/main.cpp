@@ -231,7 +231,18 @@ void displayTrackInfo(Track *song, TFT_eSPI *tft) {
     tft->fillScreen(BG_COLOUR);
 }
 
-void playHelper(MultiTrack *m, int *hi, int *lo, int *T0, int *bar, int *div, int *dx, int *dy, int *x0, int barsToDisplay) {
+void playHelper(MultiTrack *m, TFT_eSPI *tft,
+    int *hi, int *lo, int *T0, int *bar, int *div, int *dx, int *dy, int *x0,
+    int barsToDisplay, unsigned long elapsedMillis)
+{
+    // Print header information
+    tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
+    tft->setCursor(HEADER_DATUM,HEADER_DATUM);
+    tft->printf("%d:%02d  --/--  ---.---  ", elapsedMillis/60000, (elapsedMillis/1000)%60);
+    if (HEADER_WIDTH > 20) tft->printf("\n\n %.27s", m->name);
+    else tft->printf("%s", m->name);
+    tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
+    // Calculate parameters for visualiser
     *hi = 1;
     *lo = NUM_FREQS-1;
     if (!(m->colours[0])) m->colours[0] = HI_COLOUR;
@@ -250,19 +261,12 @@ void playHelper(MultiTrack *m, int *hi, int *lo, int *T0, int *bar, int *div, in
 
 unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsedMillis) {
     if (m == NULL) return 0;
+    // Set up required variables for track playback
     int hi, lo, T0, bar, div, dx, dy, x0;
-    playHelper(m, &hi, &lo, &T0, &bar, &div, &dx, &dy, &x0, barsToDisplay);
+    playHelper(m, tft, &hi, &lo, &T0, &bar, &div, &dx, &dy, &x0, barsToDisplay, elapsedMillis);
     const int NUM_CHANNELS = m->size;
     char note_t[NOTE_NAME_LEN+1] = "--";
     char note_b[NOTE_NAME_LEN+1] = "--";
-    // Print header information
-    tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
-    tft->setCursor(HEADER_DATUM,HEADER_DATUM);
-    tft->printf("%d:%02d  --/--  ---.---  ", elapsedMillis/60000, (elapsedMillis/1000)%60);
-    if (HEADER_WIDTH > 20) tft->printf("\n\n %.27s", m->name);
-    else tft->printf("%s", m->name);
-    tft->drawFastHLine(0, HEADER_WIDTH, SCREEN_LENGTH, HEADER_COLOUR);
-    // Set up required variables for track playback
     bool movedBar = false;
     bool busy[NUM_CHANNELS] = {0};
     int freq[NUM_CHANNELS] = {0};
