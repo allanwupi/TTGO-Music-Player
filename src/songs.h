@@ -2,7 +2,8 @@
 #define SONGS_H
 #include "pitches.h"
 
-#define NUM_SONGS 6
+#define NUM_PLAYABLE_SONGS 2
+#define NUM_MENU_OPTIONS 6
 #define NUM_TRACKS 9
 #define MAX_CHANNELS 8
 
@@ -18,7 +19,7 @@
 
 #define NOTE_NAME_LEN 3
 
-extern const char *SONG_DESCRIPTIONS[NUM_SONGS+1];
+extern const char *MENU[NUM_MENU_OPTIONS+1];
 
 extern const char *C_SCALE[NUM_NOTES_IN_SCALE];
 

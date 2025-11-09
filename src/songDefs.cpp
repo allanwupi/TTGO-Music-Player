@@ -2,7 +2,7 @@
 #include "pitches.h"
 #include <TFT_eSPI.h>
 
-const char *SONG_DESCRIPTIONS[NUM_SONGS+1] = {
+const char *MENU[NUM_MENU_OPTIONS+1] = {
     "1. MEGALOVANIA (2m37s)",
     "2. THE LEGEND (1m49s)",
     "3. FREEDOM MOTIF (0m13s)",

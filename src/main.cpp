@@ -89,11 +89,18 @@ void loop()
         case (2):
             play(&FREEDOM_MOTIF, tft, 4);
             break;
+        case (3):
+            play(NULL, tft);
+            break;
+        case (4):
+            play(NULL, tft);
+            break;
         case (5):
             for (int i = 0; i < NUM_TRACKS; i++) displayTrackInfo(Tracks[i], tft);
-            // fall-through to refresh menu
-        default:
-            userSelectSong(chosenSong, tft);
+            break;
+    }
+    if (chosenSong >= NUM_PLAYABLE_SONGS) {
+        userSelectSong(chosenSong, tft); // if not playing a song, return to menu
     }
 }
 
@@ -117,7 +124,7 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
         currUp = !digitalRead(UP_BUTTON);
         currDown = !digitalRead(DOWN_BUTTON);
         if (prevUp && !currUp) {
-            if (currChoice == NUM_SONGS) {
+            if (currChoice == NUM_MENU_OPTIONS) {
                 int temp = SCREEN_LENGTH;
                 SCREEN_LENGTH = SCREEN_WIDTH;
                 SCREEN_WIDTH = temp;
@@ -130,13 +137,13 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
             }
             startPlayer = true;
         } else if (prevDown && !currDown) {
-            currChoice = (currChoice+1) % (NUM_SONGS+1);
+            currChoice = (currChoice+1) % (NUM_MENU_OPTIONS+1);
         }
         if (prevChoice != currChoice) {
             tft->setTextColor(DESELECTED_COLOUR, BG_COLOUR);
-            for (int i = 0; i < NUM_SONGS+1; i++) tft->drawString(SONG_DESCRIPTIONS[i], MENU_X_DATUM, HEADER_WIDTH+10+MENU_SPACING*i);
+            for (int i = 0; i < NUM_MENU_OPTIONS+1; i++) tft->drawString(MENU[i], MENU_X_DATUM, HEADER_WIDTH+10+MENU_SPACING*i);
             tft->setTextColor(SELECTED_COLOUR, BG_COLOUR);
-            tft->drawString(SONG_DESCRIPTIONS[currChoice], MENU_X_DATUM, HEADER_WIDTH+10+MENU_SPACING*currChoice);
+            tft->drawString(MENU[currChoice], MENU_X_DATUM, HEADER_WIDTH+10+MENU_SPACING*currChoice);
             tft->setTextColor(TITLE_COLOUR, BG_COLOUR);
         }
         prevChoice = currChoice;
@@ -242,6 +249,7 @@ void playHelper(MultiTrack *m, int *hi, int *lo, int *T0, int *bar, int *div, in
 }
 
 unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned long elapsedMillis) {
+    if (m == NULL) return 0;
     int hi, lo, T0, bar, div, dx, dy, x0;
     playHelper(m, &hi, &lo, &T0, &bar, &div, &dx, &dy, &x0, barsToDisplay);
     const int NUM_CHANNELS = m->size;
