@@ -156,7 +156,7 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
 }
 
 void convertTrack(Track *usong, TFT_eSPI *tft) {
-    if (usong->converted) return;
+    if (usong == NULL || usong->converted) return;
     int currFreq;
     int minFreq = TONE_INDEX[NUM_FREQS-1]; // Initially set minFreq to max and vice versa
     int maxFreq = TONE_INDEX[0];
