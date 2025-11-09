@@ -11,8 +11,7 @@
 const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v3.6";
 const char *AUTHOR_DETAILS = " by Allan Wu (09/11/2025)";
 Preferences menuPrefs;
-TFT_eSPI TFT = TFT_eSPI();
-TFT_eSPI *tft;
+TFT_eSPI tft = TFT_eSPI();
 
 int screenOrientation;
 int chosenSong;
@@ -68,10 +67,9 @@ void setup()
     SCREEN_WIDTH = menuPrefs.getInt("width");
     HEADER_WIDTH = menuPrefs.getInt("header");
     // Convert tracks to playable format and go to startup menu
-    tft = &TFT;
-    tft->init();
-    for (int i = 0; i < NUM_TRACKS; i++) convertTrack(Tracks[i], tft); 
-    userSelectSong(chosenSong, tft);
+    tft.init();
+    for (int i = 0; i < NUM_TRACKS; i++) convertTrack(Tracks[i], &tft); 
+    userSelectSong(chosenSong, &tft);
 }
 
 void loop()
@@ -79,28 +77,28 @@ void loop()
     unsigned long runtime = 0;
     switch (chosenSong) {
         case (0):
-            play(&MEGALOVANIA, tft);
+            play(&MEGALOVANIA, &tft);
             break;
         case (1):
-            runtime += play(&LEGEND1, tft, 2, runtime);
-            runtime += play(&LEGEND2, tft, 2, runtime);
-            runtime += play(&LEGEND3, tft, 2, runtime);
+            runtime += play(&LEGEND1, &tft, 2, runtime);
+            runtime += play(&LEGEND2, &tft, 2, runtime);
+            runtime += play(&LEGEND3, &tft, 2, runtime);
             break;
         case (2):
-            play(&FREEDOM_MOTIF, tft, 4);
+            play(&FREEDOM_MOTIF, &tft, 4);
             break;
         case (3):
-            play(NULL, tft);
+            play(NULL, &tft);
             break;
         case (4):
-            play(NULL, tft);
+            play(NULL, &tft);
             break;
         case (5):
-            for (int i = 0; i < NUM_TRACKS; i++) displayTrackInfo(Tracks[i], tft);
+            for (int i = 0; i < NUM_TRACKS; i++) displayTrackInfo(Tracks[i], &tft);
             break;
     }
     if (chosenSong >= NUM_PLAYABLE_SONGS) {
-        userSelectSong(chosenSong, tft); // if not playing a song, return to menu
+        userSelectSong(chosenSong, &tft); // if not playing a song, return to menu
     }
 }
 
