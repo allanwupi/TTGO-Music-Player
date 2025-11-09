@@ -161,9 +161,15 @@ void convertTrack(Track *usong, TFT_eSPI *tft) {
         currFreq = usong->notes[i].pitch;
         if (currFreq && currFreq < minFreq) minFreq = currFreq;
         if (currFreq && currFreq > maxFreq) maxFreq = currFreq;
+        for (int n = 0; n <= NUM_FREQS; n++) {
+            if (TONE_INDEX[n] == currFreq) {
+                usong->notes[i].pitch = n; // Convert pitches to array indices
+                break;
+            }
+        }
     }
-    int n, minN, maxN;
-    for (n = 0; n <= NUM_FREQS; n++) {
+    int minN, maxN;
+    for (int n = 0; n <= NUM_FREQS; n++) {
         if (TONE_INDEX[n] == minFreq) minN = n;
         if (TONE_INDEX[n] == maxFreq) {
             maxN = n;
@@ -171,8 +177,8 @@ void convertTrack(Track *usong, TFT_eSPI *tft) {
         }
     }
     usong->numBars = time / (usong->bar);
-    usong->minFreq = (Pitch)minFreq;
-    usong->maxFreq = (Pitch)maxFreq;
+    usong->minFreq = minFreq;
+    usong->maxFreq = maxFreq;
     usong->lo = minN;
     usong->hi = maxN;
     usong->converted = true;
@@ -193,13 +199,16 @@ void displayTrackInfo(Track *song, TFT_eSPI *tft) {
     }
     char note_name[NOTE_NAME_LEN+1] = "   ";
     for (int n, k = 0; k < song->bar; k++) {
-        if (song->notes[k].pitch == REST) {
+        n = song->notes[k].pitch;
+        if (n == REST) {
             sprintf(note_name, "--");
         } else {
-            for (n = song->lo ; n <= song->hi ; n++) if (song->notes[k].pitch == TONE_INDEX[n]) break;
-            sprintf(note_name, "%s%d", song->scale[n % NUM_NOTES_IN_SCALE], (n/NUM_NOTES_IN_SCALE + 1));
+            n -= 1;
+            sprintf(note_name, "%s%d",
+                song->scale[n % NUM_NOTES_IN_SCALE],
+                (n/NUM_NOTES_IN_SCALE + 1));
         }
-        tft->printf("%02d:{%4d,%3s,%3d}  ", k, song->notes[k].pitch, note_name, song->notes[k].time);
+        tft->printf("%02d:{%4d,%3s,%3d}  ", k, TONE_INDEX[song->notes[k].pitch], note_name, song->notes[k].time);
         if (HEADER_WIDTH > 20 || k % 2 == 1) tft->printf("\n");
     }
     int prevUp = 0, prevDown = 0, currUp = 1, currDown = 1;
@@ -250,7 +259,7 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
     int freq[NUM_CHANNELS] = {0};
     int ptrs[NUM_CHANNELS] = {0};
     int next[NUM_CHANNELS] = {0};
-    int now = 0, barCount = 0, n = 1;
+    int now = 0, barCount = 0, n = 0;
     int minutes, seconds, prevSeconds = -1;
     const int stop = m->tracks[0]->notes[m->tracks[0]->size-1].time;
     unsigned long prevTick = millis(), startTime = millis();
@@ -274,10 +283,11 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
                 int i = ptrs[k];
                 busy[k] = true;
                 int delta = (i > 0) ? (m->tracks[k]->notes[i].time - m->tracks[k]->notes[i-1].time) : m->tracks[k]->notes[i].time;
-                freq[k] = m->tracks[k]->notes[i].pitch;
+                n = m->tracks[k]->notes[i].pitch;
+                freq[k] = TONE_INDEX[n];
                 ledcWriteTone(m->channels[k], freq[k]);
-                if (freq[k] > 0) {
-                    for (n = lo ; n <= hi ; n++) if (freq[k] == TONE_INDEX[n]) break;
+                if (n != REST) {
+                    n -= 1;
                     tft->drawFastHLine(x0+(now%div)*dx, max(HEADER_WIDTH+2, SCREEN_WIDTH-1-dy*(n-lo)), dx*delta-2, m->colours[k]);
                     if (k == 0) sprintf(note_t, "%s%d", m->scale[n % NUM_NOTES_IN_SCALE], (n/NUM_NOTES_IN_SCALE + 1));
                     else if (k == 1) sprintf(note_b, "%s%d", m->scale[n % NUM_NOTES_IN_SCALE], (n/NUM_NOTES_IN_SCALE + 1));

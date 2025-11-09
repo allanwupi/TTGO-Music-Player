@@ -23,7 +23,7 @@ extern const char *SONG_DESCRIPTIONS[NUM_SONGS+1];
 extern const char *C_SCALE[NUM_NOTES_IN_SCALE];
 
 typedef struct {
-    Pitch pitch; // 0 for NO PITCH
+    int pitch; // 0 indicates no note (REST), use PITCH enum
     unsigned int time; // TODO: implement special behaviour for 0?
 } Note;
 
@@ -36,8 +36,8 @@ typedef struct {
     const char *scale[NUM_NOTES_IN_SCALE]; // Array of 12 strings
     // Remaining members are set during conversion: do NOT initialise
     int numBars; // Length of the song in bars
-    Pitch minFreq; // Used to draw lines in note visualiser
-    Pitch maxFreq; // Used to draw lines in note visualiser
+    int minFreq; // Used to draw lines in note visualiser
+    int maxFreq; // Used to draw lines in note visualiser
     int lo; // Array index into TONE_INDEX
     int hi; // Array index into TONE_INDEX
     bool converted; // Notes must be converted before playing

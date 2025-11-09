@@ -1,6 +1,6 @@
 #ifndef PITCHES_H
 #define PITCHES_H
-#define NUM_FREQS 85 // Range from C1 to C8
+#define NUM_FREQS 86 // Range from C1 to C8 + REST
 #define NUM_NOTES_IN_SCALE 12 // Chromatic scale
 
 typedef enum { REST=0,
@@ -91,7 +91,7 @@ typedef enum { REST=0,
 	C8=4186,
 } Pitch;
 
-const int TONE_INDEX[NUM_FREQS] = {
+const int TONE_INDEX[NUM_FREQS] = {0,
     33, //C1
     35,
     37,
