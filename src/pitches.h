@@ -1,7 +1,6 @@
 #ifndef PITCHES_H
 #define PITCHES_H
 #define NUM_FREQS 86 // Range from C1 to C8 + REST
-#define NUM_NOTES_IN_SCALE 12 // Chromatic scale
 
 typedef enum { REST=0,
 	C1=33,

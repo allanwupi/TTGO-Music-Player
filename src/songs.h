@@ -17,7 +17,8 @@
 #define LEDC_FREQUENCY 20000
 #define LEDC_RESOLUTION 16
 
-#define NOTE_NAME_LEN 3
+#define NOTE_NAME_LEN 3 // e.g. "Bb4"
+#define NUM_NOTES_IN_SCALE 12 // Chromatic scale
 
 extern const char *MENU[NUM_MENU_OPTIONS+1];
 
