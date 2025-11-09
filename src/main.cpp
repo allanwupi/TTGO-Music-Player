@@ -287,8 +287,8 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
                 freq[k] = TONE_INDEX[n];
                 ledcWriteTone(m->channels[k], freq[k]);
                 if (n != REST) {
-                    n -= 1;
                     tft->drawFastHLine(x0+(now%div)*dx, max(HEADER_WIDTH+2, SCREEN_WIDTH-1-dy*(n-lo)), dx*delta-2, m->colours[k]);
+                    n -= 1;
                     if (k == 0) sprintf(note_t, "%s%d", m->scale[n % NUM_NOTES_IN_SCALE], (n/NUM_NOTES_IN_SCALE + 1));
                     else if (k == 1) sprintf(note_b, "%s%d", m->scale[n % NUM_NOTES_IN_SCALE], (n/NUM_NOTES_IN_SCALE + 1));
                     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
