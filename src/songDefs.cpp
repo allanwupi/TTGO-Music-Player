@@ -18,6 +18,7 @@ Track Megalovania_T = {
     .size = 766,
     .beat = 63,
     .bar = 32,
+    .scale = {"C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"},
 };
 
 Track Megalovania_B = {
@@ -26,6 +27,7 @@ Track Megalovania_B = {
     .size = 978, 
     .beat = 63,
     .bar = 32,
+    .scale = {"C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"},
 };
 
 Track TheLegend1_T = {
@@ -34,6 +36,7 @@ Track TheLegend1_T = {
     .size = 33,
     .beat = 272,
     .bar = 8,
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };
 
 Track TheLegend1_B = {
@@ -42,6 +45,7 @@ Track TheLegend1_B = {
     .size = 20,
     .beat = 272,
     .bar = 8,
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };
 
 Track TheLegend2_T = {
@@ -50,6 +54,7 @@ Track TheLegend2_T = {
     .size = 134,
     .beat = 136,
     .bar = 16,
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };
 
 Track TheLegend2_B = {
@@ -58,6 +63,7 @@ Track TheLegend2_B = {
     .size = 157,
     .beat = 136,
     .bar = 16,
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };
 
 Track TheLegend3_T = {
@@ -66,6 +72,7 @@ Track TheLegend3_T = {
     .size = 50,
     .beat = 46,
     .bar = 24,
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };
 
 Track TheLegend3_B = {
@@ -74,6 +81,7 @@ Track TheLegend3_B = {
     .size = 55,
     .beat = 46,
     .bar = 24,
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };
 
 Track FreedomMotif = {
@@ -82,6 +90,7 @@ Track FreedomMotif = {
     .size = 31,
     .beat = 107,
     .bar = 16,
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };
 
 Track *Tracks[NUM_TRACKS] = {
@@ -97,6 +106,7 @@ MultiTrack MEGALOVANIA = {
     .tracks = {&Megalovania_T, &Megalovania_B},
     .size = 2,
     .channels = {TREBLE, BASS},
+    .scale = {"C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"},
 };
 
 MultiTrack LEGEND1 = {
@@ -104,13 +114,15 @@ MultiTrack LEGEND1 = {
     .tracks = {&TheLegend1_T, &TheLegend1_B},
     .size = 2,
     .channels = {TREBLE, BASS},
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };
 
 MultiTrack LEGEND2 = {
     .name = "THE LEGEND - Toby Fox (2/3)",
     .tracks = {&TheLegend2_T, &TheLegend2_B},
-    .size = 2,
+    .size = 2, 
     .channels = {TREBLE, BASS},
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };
 
 MultiTrack LEGEND3 = {
@@ -118,6 +130,7 @@ MultiTrack LEGEND3 = {
     .tracks = {&TheLegend3_T, &TheLegend3_B},
     .size = 2,
     .channels = {TREBLE, BASS},
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };
 
 MultiTrack FREEDOM_MOTIF = {
@@ -125,5 +138,6 @@ MultiTrack FREEDOM_MOTIF = {
     .tracks = {&FreedomMotif},
     .size = 1,
     .channels = {TREBLE},
-    .colours = {TFT_GOLD}
+    .colours = {TFT_GOLD},
+    .scale = {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"},
 };

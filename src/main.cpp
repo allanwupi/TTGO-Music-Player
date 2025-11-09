@@ -1,4 +1,4 @@
-// TTGO MUSIC PLAYER v3.5
+// TTGO MUSIC PLAYER v3.6
 // By Allan Wu
 // Updated: 8 November 2025
 
@@ -8,8 +8,8 @@
 #include "songs.h"
 #include "pitches.h"
 
-const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v3.5";
-const char *AUTHOR_DETAILS = " by Allan Wu (08/11/2025)";
+const char *PROGRAM_NAME = "TTGO MUSIC PLAYER v3.6";
+const char *AUTHOR_DETAILS = " by Allan Wu (09/11/2025)";
 Preferences menuPrefs;
 TFT_eSPI TFT = TFT_eSPI();
 TFT_eSPI *tft;
@@ -152,8 +152,8 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
 void convertTrack(Track *usong, TFT_eSPI *tft) {
     if (usong->converted) return;
     int currFreq;
-    int minFreq = DS8;
-    int maxFreq = NOTE_B0;
+    int minFreq = TONE_INDEX[NUM_FREQS-1]; // Initially set minFreq to max and vice versa
+    int maxFreq = TONE_INDEX[0];
     int time = 0; // Convert note durations to absolute end time
     for (int i = 0; i < usong->size; i++) {
         time += usong->notes[i].time;
@@ -163,7 +163,7 @@ void convertTrack(Track *usong, TFT_eSPI *tft) {
         if (currFreq && currFreq > maxFreq) maxFreq = currFreq;
     }
     int n, minN, maxN;
-    for (n = 1; n <= NUM_FREQS; n++) {
+    for (n = 0; n <= NUM_FREQS; n++) {
         if (TONE_INDEX[n] == minFreq) minN = n;
         if (TONE_INDEX[n] == maxFreq) {
             maxN = n;
@@ -191,8 +191,15 @@ void displayTrackInfo(Track *song, TFT_eSPI *tft) {
         tft->printf("T0=%dms bars=%dx%d lo=%dHz hi=%dHz [%02d-%02d]\n\n",
             song->beat, song->numBars, song->bar, song->minFreq, song->maxFreq, song->lo, song->hi);
     }
-    for (int k = 0; k < song->bar; k++) {
-        tft->printf("%02d:{%4d,%3s,%3d}  ", k, song->notes[k].pitch, song->notes[k].name, song->notes[k].time);
+    char note_name[NOTE_NAME_LEN+1] = "   ";
+    for (int n, k = 0; k < song->bar; k++) {
+        if (song->notes[k].pitch == REST) {
+            sprintf(note_name, "--");
+        } else {
+            for (n = song->lo ; n <= song->hi ; n++) if (song->notes[k].pitch == TONE_INDEX[n]) break;
+            sprintf(note_name, "%s%d", song->scale[n % NUM_NOTES_IN_SCALE], (n/NUM_NOTES_IN_SCALE + 1));
+        }
+        tft->printf("%02d:{%4d,%3s,%3d}  ", k, song->notes[k].pitch, note_name, song->notes[k].time);
         if (HEADER_WIDTH > 20 || k % 2 == 1) tft->printf("\n");
     }
     int prevUp = 0, prevDown = 0, currUp = 1, currDown = 1;
@@ -228,8 +235,8 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
     int hi, lo, T0, bar, div, dx, dy, x0;
     playHelper(m, &hi, &lo, &T0, &bar, &div, &dx, &dy, &x0, barsToDisplay);
     const int NUM_CHANNELS = m->size;
-    const char *note_t = m->tracks[0]->notes[0].name;
-    const char *note_b = (NUM_CHANNELS > 1) ? m->tracks[1]->notes[0].name : "  ";
+    char note_t[NOTE_NAME_LEN+1] = "--";
+    char note_b[NOTE_NAME_LEN+1] = "--";
     // Print header information
     tft->setTextColor(HEADER_COLOUR, BG_COLOUR);
     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
@@ -272,8 +279,8 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
                 if (freq[k] > 0) {
                     for (n = lo ; n <= hi ; n++) if (freq[k] == TONE_INDEX[n]) break;
                     tft->drawFastHLine(x0+(now%div)*dx, max(HEADER_WIDTH+2, SCREEN_WIDTH-1-dy*(n-lo)), dx*delta-2, m->colours[k]);
-                    if (k == 0) note_t = m->tracks[k]->notes[i].name;
-                    else if (k == 1) note_b = m->tracks[k]->notes[i].name;
+                    if (k == 0) sprintf(note_t, "%s%d", m->scale[n % NUM_NOTES_IN_SCALE], (n/NUM_NOTES_IN_SCALE + 1));
+                    else if (k == 1) sprintf(note_b, "%s%d", m->scale[n % NUM_NOTES_IN_SCALE], (n/NUM_NOTES_IN_SCALE + 1));
                     tft->setCursor(HEADER_DATUM,HEADER_DATUM);
                     tft->printf("%d:%02d  %2d/%-2d  %-3s.%-3s", minutes, seconds, barCount, m->tracks[k]->numBars, note_t, note_b);
                 }
@@ -286,9 +293,6 @@ unsigned long play(MultiTrack *m, TFT_eSPI *tft, int barsToDisplay, unsigned lon
             for (int k = 0; k < NUM_CHANNELS; k++) busy[k] = 0;
             now++;
             prevTick = millis();
-            continue;
-        } else {
-            delayMicroseconds(500); // delay 0.5 ms to reduce loop computations
         }
     }
     for (int k = 0; k < NUM_CHANNELS; k++) ledcWriteTone(m->channels[k], 0);

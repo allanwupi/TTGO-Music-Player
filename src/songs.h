@@ -16,11 +16,14 @@
 #define LEDC_FREQUENCY 20000
 #define LEDC_RESOLUTION 16
 
+#define NOTE_NAME_LEN 3
+
 extern const char *SONG_DESCRIPTIONS[NUM_SONGS+1];
+
+extern const char *C_SCALE[NUM_NOTES_IN_SCALE];
 
 typedef struct {
     Pitch pitch; // 0 for NO PITCH
-    const char *name; // 2-3 characters
     unsigned int time; // TODO: implement special behaviour for 0?
 } Note;
 
@@ -30,6 +33,7 @@ typedef struct {
     int size; // Size of note array
     int beat; // Base note duration in milliseconds (shortest note)
     int bar; // Number of shortest notes that make up 1 bar
+    const char *scale[NUM_NOTES_IN_SCALE]; // Array of 12 strings
     // Remaining members are set during conversion: do NOT initialise
     int numBars; // Length of the song in bars
     Pitch minFreq; // Used to draw lines in note visualiser
@@ -45,6 +49,7 @@ typedef struct {
     int size; // Number of channels actually used
     int channels[MAX_CHANNELS]; // Array of LEDC channels
     int colours[MAX_CHANNELS]; // Array of TFT colours
+    const char *scale[NUM_NOTES_IN_SCALE]; // Array of 12 strings
 } MultiTrack;
 
 extern MultiTrack MEGALOVANIA;

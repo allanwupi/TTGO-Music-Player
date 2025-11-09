@@ -1,10 +1,9 @@
 #ifndef PITCHES_H
 #define PITCHES_H
-#define NUM_FREQS 90 // Range from B0 to DS8
+#define NUM_FREQS 85 // Range from C1 to C8
+#define NUM_NOTES_IN_SCALE 12 // Chromatic scale
 
-typedef enum {
-	REST=0,
-	NOTE_B0=31,
+typedef enum { REST=0,
 	C1=33,
 	CS1=35,
 	D1=37,
@@ -90,15 +89,10 @@ typedef enum {
 	AS7=3729,
 	B7=3951,
 	C8=4186,
-	CS8=4435,
-	D8=4699,
-	DS8=4978,
 } Pitch;
 
 const int TONE_INDEX[NUM_FREQS] = {
-    0,
-    31,
-    33,
+    33, //C1
     35,
     37,
     39,
@@ -110,7 +104,7 @@ const int TONE_INDEX[NUM_FREQS] = {
     55,
     58,
     62,
-    65,
+    65, //C2
     69,
     73,
     78,
@@ -122,7 +116,7 @@ const int TONE_INDEX[NUM_FREQS] = {
     110,
     117,
     123,
-    131,
+    131, //C3
     139,
     147,
     156,
@@ -134,7 +128,7 @@ const int TONE_INDEX[NUM_FREQS] = {
     220,
     233,
     247,
-    262,
+    262, //C4
     277,
     294,
     311,
@@ -146,7 +140,7 @@ const int TONE_INDEX[NUM_FREQS] = {
     440,
     466,
     494,
-    523,
+    523, //C5
     554,
     587,
     622,
@@ -158,7 +152,7 @@ const int TONE_INDEX[NUM_FREQS] = {
     880,
     932,
     988,
-    1047,
+    1047, //C6
     1109,
     1175,
     1245,
@@ -170,7 +164,7 @@ const int TONE_INDEX[NUM_FREQS] = {
     1760,
     1865,
     1976,
-    2093,
+    2093, //C7
     2217,
     2349,
     2489,
@@ -182,10 +176,7 @@ const int TONE_INDEX[NUM_FREQS] = {
     3520,
     3729,
     3951,
-    4186,
-    4435,
-    4699,
-    4978,
+    4186, //C8
 };
 
 #endif
