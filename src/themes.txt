@@ -1,5 +1,5 @@
 #define TITLE_COLOUR        TFT_WHITE       // Program name
-#define SELECTED_COLOUR     TFT_WHITE      	// Selected option
+#define SELECTED_COLOUR     TFT_WHITE       // Selected option
 #define DESELECTED_COLOUR   0x2965          // Greyed-out option
 #define HEADER_COLOUR       TFT_WHITE       // Top description
 #define HI_COLOUR           TFT_CYAN        // Treble track
@@ -9,13 +9,13 @@
 #define TITLE_COLOUR        TFT_WHITE       // Program name
 #define SELECTED_COLOUR     TFT_WHITE       // Selected option
 #define DESELECTED_COLOUR   0x2965          // Greyed-out option
-#define HEADER_COLOUR       TFT_BLUE       	// Top description
+#define HEADER_COLOUR       TFT_BLUE        // Top description
 #define HI_COLOUR           TFT_BLUE        // Treble track
-#define LO_COLOUR           TFT_NAVY	    // Bass track
+#define LO_COLOUR           TFT_NAVYg       // Bass track
 #define BG_COLOUR           TFT_BLACK       // Background
 
 #define TITLE_COLOUR        TFT_WHITE       // Program name
-#define SELECTED_COLOUR     TFT_GOLD      	// Selected option
+#define SELECTED_COLOUR     TFT_GOLD        // Selected option
 #define DESELECTED_COLOUR   0x2965          // Greyed-out option
 #define HEADER_COLOUR       TFT_WHITE       // Top description
 #define HI_COLOUR           TFT_GOLD        // Treble track
