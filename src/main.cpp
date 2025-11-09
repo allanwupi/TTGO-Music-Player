@@ -142,6 +142,7 @@ void userSelectSong(int defaultChoice, TFT_eSPI *tft) {
         prevChoice = currChoice;
         prevUp = currUp;
         prevDown = currDown;
+        delay(10); // delay 10 ms to reduce loop computations
     }
     tft->fillScreen(BG_COLOUR);
     tft->setTextSize(1);
